@@ -5,9 +5,12 @@ import { Spotify } from "./icons";
 export default function Footer() {
   return (
     <footer className="w-full mt-auto text-white">
-      <div className="bg-[#1c1c1c] py-8">
+      <div className="bg-[#333333] py-8">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground space-y-4">
-            <p>TRACKBPM helps you find the BPM and Key for any song. We hope you find our service helpful.</p>
+            <div>
+              <p>TRACKBPM helps you find the BPM and Key for any song.</p>
+              <p>We hope you find our service helpful.</p>
+            </div>
             <p>Got questions or feedback? <Link href="#" className="underline hover:text-primary">Let us know.</Link></p>
             <div className="flex items-center justify-center gap-2">
                 <span>Song data provided by</span>

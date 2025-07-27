@@ -4,6 +4,10 @@ import { Separator } from "./ui/separator";
 import { Spotify } from "./icons";
 
 export default function Footer() {
+  const emailAddress = "saytee.software@gmail.com";
+  const subject = "New Email from TRACK⚡BPM";
+  const mailtoLink = `mailto:${emailAddress}?subject=${encodeURIComponent(subject)}`;
+
   return (
     <footer className="w-full mt-auto">
       <div className="bg-[#171717] py-8">
@@ -12,7 +16,7 @@ export default function Footer() {
               <p>TRACK⚡BPM helps you find the BPM and Key for any song.</p>
               <p>We hope you find our service helpful.</p>
             </div>
-            <p>Got questions or feedback? <Link href="#" className="underline hover:text-primary">Let us know.</Link></p>
+            <p>Got questions or feedback? <a href={mailtoLink} className="underline hover:text-primary">Let us know.</a></p>
             <div className="flex items-center justify-center gap-2">
                 <span>Song data provided by</span>
                 <Spotify className="h-5 w-5"/>

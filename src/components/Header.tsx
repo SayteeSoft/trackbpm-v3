@@ -11,33 +11,36 @@ import { Song } from '@/lib/types';
 import { Search, Loader2 } from 'lucide-react';
 import { searchSpotifyTracks } from '@/lib/actions';
 
-function SearchResults({ songs, isLoading, searchTerm }: { songs: Song[], isLoading: boolean, searchTerm: string }) {
-  const showResults = searchTerm.length > 2;
+const DEFAULT_SEARCH_TERM = "Taylor Swift";
 
-  if (!showResults) {
-    if (searchTerm.length === 0 && !isLoading) {
-      return (
-        <p className="text-center text-sm text-muted-foreground mb-12">
-          e.g., <span className="font-semibold text-foreground">Sabrina Carpenter - Espresso</span>
-        </p>
-      );
-    }
-    return null;
+function SearchResults({ songs, isLoading, searchTerm, initialLoad }: { songs: Song[], isLoading: boolean, searchTerm: string, initialLoad: boolean }) {
+
+  if (initialLoad && isLoading) {
+    return (
+       <div className="flex justify-center">
+          <Loader2 className="h-8 w-8 text-muted-foreground animate-spin" />
+       </div>
+    );
   }
-  
+
+  if (searchTerm.length > 0 && !isLoading && songs.length === 0) {
+    return (
+      <p className="text-center text-sm text-muted-foreground mb-12">
+        No results found for "{searchTerm}".
+      </p>
+    );
+  }
+
+  if (songs.length === 0 && !isLoading) {
+    return (
+      <p className="text-center text-sm text-muted-foreground mb-12">
+        e.g., <span className="font-semibold text-foreground">Sabrina Carpenter - Espresso</span>
+      </p>
+    );
+  }
+
   return (
     <div className='container mx-auto px-4 py-8 max-w-4xl'>
-      {isLoading && (
-         <div className="flex justify-center">
-            <Loader2 className="h-8 w-8 text-muted-foreground animate-spin" />
-         </div>
-      )}
-      { !isLoading && songs.length === 0 && (
-        <p className="text-center text-sm text-muted-foreground mb-12">
-          No results found for "{searchTerm}".
-        </p>
-      )}
-      
       {songs.length > 0 && (
         <div className="space-y-4 max-w-[calc(42rem+90px)] mx-auto mb-8">
           {songs.map((song, index) => (
@@ -47,6 +50,11 @@ function SearchResults({ songs, isLoading, searchTerm }: { songs: Song[], isLoad
             </React.Fragment>
           ))}
         </div>
+      )}
+       {isLoading && !initialLoad && (
+         <div className="flex justify-center mt-4">
+            <Loader2 className="h-8 w-8 text-muted-foreground animate-spin" />
+         </div>
       )}
     </div>
   );
@@ -59,13 +67,15 @@ export default function Header() {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [songs, setSongs] = useState<Song[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [initialLoad, setInitialLoad] = useState(true);
 
   const handleSearch = useCallback(async (term: string) => {
-    if (term.length < 3) {
+    if (!term) {
       setSongs([]);
       setError(null);
+      setIsLoading(false);
       return;
     }
 
@@ -79,22 +89,28 @@ export default function Header() {
       setSongs(result.songs || []);
     }
     setIsLoading(false);
-  }, []);
+    if(initialLoad){
+      setInitialLoad(false);
+    }
+  }, [initialLoad]);
 
   useEffect(() => {
-    if (!isHomePage) {
-        setSearchTerm('');
-        setSongs([]);
-        setError(null);
-        return;
-    };
-
-    const debounceTimeout = setTimeout(() => {
-      handleSearch(searchTerm);
-    }, 500);
-
-    return () => clearTimeout(debounceTimeout);
-  }, [searchTerm, handleSearch, isHomePage]);
+    if (isHomePage) {
+      if (initialLoad) {
+        handleSearch(DEFAULT_SEARCH_TERM);
+      } else {
+        const debounceTimeout = setTimeout(() => {
+          handleSearch(searchTerm);
+        }, 500);
+        return () => clearTimeout(debounceTimeout);
+      }
+    } else {
+      setSearchTerm('');
+      setSongs([]);
+      setError(null);
+      setIsLoading(false);
+    }
+  }, [searchTerm, isHomePage, initialLoad, handleSearch]);
 
   return (
     <>
@@ -115,7 +131,6 @@ export default function Header() {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="w-full pl-4 pr-12 py-7 rounded-md shadow-lg bg-card border-2 border-border text-lg"
-          disabled={!isHomePage}
         />
         {isLoading && isHomePage ? (
           <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground animate-spin" />
@@ -124,7 +139,7 @@ export default function Header() {
         )}
       </div>
 
-      {isHomePage && <SearchResults songs={songs} isLoading={isLoading} searchTerm={searchTerm} />}
+      {isHomePage && <SearchResults songs={songs} isLoading={isLoading} searchTerm={searchTerm} initialLoad={initialLoad} />}
     </>
   );
 }

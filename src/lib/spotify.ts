@@ -155,11 +155,14 @@ export const getTrackDetails = async (trackId: string): Promise<Song> => {
     const token = await getAccessToken();
 
     try {
-        const trackResponse = await fetch(`${API_BASE}/tracks/${trackId}`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
+        const [trackResponse, featuresResponse] = await Promise.all([
+            fetch(`${API_BASE}/tracks/${trackId}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            }),
+            fetch(`${API_BASE}/audio-features/${trackId}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            })
+        ]);
 
         if (!trackResponse.ok) {
             const errorText = await trackResponse.text();
@@ -167,15 +170,10 @@ export const getTrackDetails = async (trackId: string): Promise<Song> => {
         }
 
         const trackData = await trackResponse.json();
-
-        const featuresResponse = await fetch(`${API_BASE}/audio-features/${trackId}`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-
+        
         if (!featuresResponse.ok) {
-            console.error(`Failed to get audio features for track ${trackId}. Returning details without them.`);
+            const errorText = await featuresResponse.text();
+            console.error(`Failed to get audio features for track ${trackId}: ${featuresResponse.status} - ${errorText}. Returning details without them.`);
             return transformTrackData(trackData, null);
         }
 

@@ -43,13 +43,13 @@ export default function SongCard({ song }: { song: Song }) {
       </CardContent>
       <Separator />
       <div className="p-3 flex items-center justify-start gap-6 text-muted-foreground">
-        <a href={song.links.spotify} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-sm hover:text-primary">
+        <a href={song.links.spotify} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-sm hover:text-primary" onClick={(e) => e.stopPropagation()}>
           <Spotify className="h-4 w-4" /> Spotify
         </a>
-        <a href={song.links.appleMusic} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-sm hover:text-primary">
+        <a href={song.links.appleMusic} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-sm hover:text-primary" onClick={(e) => e.stopPropagation()}>
           <Apple className="h-4 w-4" /> Apple Music
         </a>
-        <a href={song.links.amazonMusic} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-sm hover:text-primary">
+        <a href={song.links.amazonMusic} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-sm hover:text-primary" onClick={(e) => e.stopPropagation()}>
           <Amazon className="h-4 w-4" /> Amazon
         </a>
       </div>

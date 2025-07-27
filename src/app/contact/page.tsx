@@ -36,10 +36,11 @@ export default function ContactPage() {
     const formData = {
         access_key: accessKey,
         name: name,
-        email: email,
+        email: "saytee.software@gmail.com",
         message: message,
         subject: "New Email from TRACK⚡BPM",
         from_name: "TRACK⚡BPM Contact Form",
+        replyto: email,
         redirect: "https://web3forms.com/success",
     };
 

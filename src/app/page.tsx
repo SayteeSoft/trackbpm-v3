@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -74,11 +75,11 @@ export default function Home() {
           </p>
 
           {displayedSongs.length > 0 ? (
-            <div className="space-y-4 max-w-[calc(42rem+90px)] mx-auto">
+            <div className="space-y-4 max-w-[calc(42rem+90px)] mx-auto mb-8">
               {displayedSongs.map((song, index) => (
                 <React.Fragment key={song.id}>
-                  <SongCard song={song} />
-                  {(index + 1) % 3 === 0 && (index + 1) < displayedSongs.length && <AdBanner />}
+                   <SongCard song={song} />
+                  {(index + 1) % 3 === 0 && <AdBanner />}
                 </React.Fragment>
               ))}
             </div>

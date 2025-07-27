@@ -36,7 +36,7 @@ function SearchResults({ songs, isLoading, searchTerm }: { songs: Song[], isLoad
     return () => clearInterval(intervalId);
   }, []);
 
-  if (isLoading && songs.length === 0) {
+  if (isLoading) {
     return (
        <div className="flex justify-center py-12">
           <Loader2 className="h-8 w-8 text-muted-foreground animate-spin" />
@@ -44,39 +44,27 @@ function SearchResults({ songs, isLoading, searchTerm }: { songs: Song[], isLoad
     );
   }
 
-  if (searchTerm.length > 0 && !isLoading && songs.length === 0) {
+  if (songs.length === 0) {
     return (
-      <p className="text-center text-sm text-muted-foreground py-12">
-        No results found for "{searchTerm}". Please try another search.
-      </p>
+        <div className="text-center text-sm text-muted-foreground py-12">
+          <p>No results found for "{searchTerm}".</p>
+          <p className="mt-2">
+              For example: <span className="font-semibold text-foreground">{currentExample.text}</span> (which is {currentExample.bpm} BPM, by the way)
+          </p>
+      </div>
     );
   }
   
-  if (songs.length === 0 && !isLoading && searchTerm === '') {
-      return (
-          <p className="text-center text-sm text-muted-foreground py-12">
-              For example: <span className="font-semibold text-foreground">{currentExample.text}</span> (which is {currentExample.bpm} BPM, by the way)
-          </p>
-      )
-  }
-
   return (
     <div className='container mx-auto px-4 py-8 max-w-4xl'>
-      {songs.length > 0 && (
-        <div className="space-y-4 max-w-[calc(42rem+90px)] mx-auto mb-8">
-          {songs.map((song, index) => (
-            <React.Fragment key={song.id}>
-              <SongCard song={song} />
-              {(index + 1) % 3 === 0 && <AdBanner />}
-            </React.Fragment>
-          ))}
-        </div>
-      )}
-       {isLoading && songs.length > 0 && (
-         <div className="flex justify-center mt-4">
-            <Loader2 className="h-8 w-8 text-muted-foreground animate-spin" />
-         </div>
-      )}
+      <div className="space-y-4 max-w-[calc(42rem+90px)] mx-auto mb-8">
+        {songs.map((song, index) => (
+          <React.Fragment key={song.id}>
+            <SongCard song={song} />
+            {(index + 1) % 3 === 0 && <AdBanner />}
+          </React.Fragment>
+        ))}
+      </div>
     </div>
   );
 }
@@ -86,9 +74,10 @@ export default function Header() {
   const pathname = usePathname();
   const isHomePage = pathname === '/';
 
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState(DEFAULT_SEARCH_TERM);
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(DEFAULT_SEARCH_TERM);
   const [songs, setSongs] = useState<Song[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const handleSearch = useCallback(async (term: string) => {
@@ -112,30 +101,20 @@ export default function Header() {
   }, []);
   
   useEffect(() => {
-    if (!isHomePage) {
-      setSongs([]);
-      setSearchTerm('');
-      setIsLoading(false);
-      return;
-    };
-    
-    // Initial load with default term
-    if (isHomePage && searchTerm === '' && songs.length === 0 && !isLoading) {
-      handleSearch(DEFAULT_SEARCH_TERM);
-    }
-    
     const debounceTimeout = setTimeout(() => {
-        // User is typing a search
-      if (searchTerm) {
-        handleSearch(searchTerm);
-      } else if (!searchTerm && songs.length > 0) {
-        // User cleared the search, so clear the songs
-        setSongs([]);
-      }
+      setDebouncedSearchTerm(searchTerm);
     }, 500);
-
     return () => clearTimeout(debounceTimeout);
-  }, [searchTerm, isHomePage, handleSearch, songs.length, isLoading]);
+  }, [searchTerm]);
+
+  useEffect(() => {
+    if (isHomePage) {
+      handleSearch(debouncedSearchTerm);
+    } else {
+      setSongs([]);
+      setIsLoading(false);
+    }
+  }, [debouncedSearchTerm, isHomePage, handleSearch]);
 
 
   return (
@@ -167,7 +146,7 @@ export default function Header() {
         </div>
       )}
 
-      {isHomePage && <SearchResults songs={songs} isLoading={isLoading} searchTerm={searchTerm} />}
+      {isHomePage && <SearchResults songs={songs} isLoading={isLoading} searchTerm={debouncedSearchTerm} />}
     </>
   );
 }

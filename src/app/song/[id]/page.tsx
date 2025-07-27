@@ -79,7 +79,7 @@ export default async function SongPage({ params }: { params: { id: string } }) {
                         data-ai-hint="album cover"
                         />
                     </div>
-                    <div className="flex-1 mt-4 sm:mt-0 text-center sm:text-left">
+                    <div className="flex-1 mt-4 sm:mt-1 text-center sm:text-left">
                         <p className="text-lg font-medium text-foreground mb-2">{song.artist}</p>
                         <h1 className="text-5xl sm:text-7xl font-bold tracking-tighter text-foreground">{song.title}</h1>
                         {song.bpm && (

@@ -62,7 +62,7 @@ const formatDuration = (ms: number): string => {
 };
 
 const keyMap = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
-const modeMap = ['minor', 'Major'];
+const modeMap = ['Minor', 'Major'];
 
 /**
  * Formats the key and mode into a string (e.g., "C Major").
@@ -105,9 +105,7 @@ export const searchTracks = async (query: string): Promise<Song[]> => {
   
   let searchUrl;
   if (query === 'popular') {
-    const randomOffset = Math.floor(Math.random() * 500);
-    const randomChar = 'abcdefghijklmnopqrstuvwxyz'.charAt(Math.floor(Math.random() * 26));
-    searchUrl = `https://api.spotify.com/v1/search?q=${randomChar}%25&type=track&limit=9&offset=${randomOffset}`;
+    searchUrl = `https://api.spotify.com/v1/search?q=popular&type=track&limit=9`;
   } else {
     searchUrl = `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track&limit=9`;
   }
@@ -156,11 +154,20 @@ export const getTrackDetails = async (trackId: string): Promise<Song> => {
     fetch(featuresUrl, { headers: { Authorization: `Bearer ${token}` } }),
   ]);
 
-  if (!trackResponse.ok) throw new Error('Failed to get track details');
+  if (!trackResponse.ok) {
+    const errorText = await trackResponse.text();
+    throw new Error(`Failed to get track details: ${trackResponse.status} ${errorText}`);
+  }
   
   const trackData = await trackResponse.json();
+  
   // Features can sometimes be null for certain tracks, so we handle that gracefully
-  const featuresData = featuresResponse.ok ? await featuresResponse.json() : null;
+  if (!featuresResponse.ok) {
+    console.warn(`Could not get audio features for track ${trackId}`);
+    return transformTrackData(trackData, null);
+  }
+
+  const featuresData = await featuresResponse.json();
 
   return transformTrackData(trackData, featuresData);
 };

@@ -39,6 +39,7 @@ function ExampleSong() {
   const [currentExample, setCurrentExample] = useState(exampleSongs[0]);
 
   useEffect(() => {
+    // This logic runs only on the client
     const getHourlyExample = () => {
       const hour = new Date().getHours();
       const index = hour % exampleSongs.length;
@@ -129,20 +130,21 @@ export default function Header() {
   }, [searchTerm]);
 
   useEffect(() => {
-    const getHourlySearchTerm = () => {
-        const hour = new Date().getHours();
-        return HOURLY_SEARCH_TERMS[hour % HOURLY_SEARCH_TERMS.length];
-    }
-    
-    if (isHomePage) {
-      if (debouncedSearchTerm) {
-        handleSearch(debouncedSearchTerm);
-      } else {
-        handleSearch(getHourlySearchTerm());
-      }
-    } else {
+    if (!isHomePage) {
       setSongs([]);
       setIsLoading(false);
+      return;
+    }
+    
+    if (debouncedSearchTerm) {
+      handleSearch(debouncedSearchTerm);
+    } else {
+      // This logic now correctly runs only on the client side, ensuring variety.
+      const getHourlySearchTerm = () => {
+        const hour = new Date().getHours();
+        return HOURLY_SEARCH_TERMS[hour % HOURLY_SEARCH_TERMS.length];
+      };
+      handleSearch(getHourlySearchTerm());
     }
   }, [debouncedSearchTerm, isHomePage, handleSearch]);
 

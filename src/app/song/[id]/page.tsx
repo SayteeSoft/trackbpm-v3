@@ -22,6 +22,7 @@ export default async function SongPage({ params }: { params: { id: string } }) {
   const { song } = result;
 
   const amazonSearchUrl = `https://music.amazon.com/search/${encodeURIComponent(song.title + ' ' + song.artist)}`;
+  const appleSearchUrl = `https://music.apple.com/us/search?term=${encodeURIComponent(song.title + ' ' + song.artist)}`;
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -53,8 +54,10 @@ export default async function SongPage({ params }: { params: { id: string } }) {
                           <Spotify className="h-6 w-6" /> Spotify
                         </a>
                       </Button>
-                      <Button variant="outline" disabled>
-                        <Apple className="h-6 w-6" /> Apple Music
+                      <Button variant="outline" asChild>
+                        <a href={appleSearchUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
+                          <Apple className="h-6 w-6" /> Apple Music
+                        </a>
                       </Button>
                       <Button variant="outline" asChild>
                         <a href={amazonSearchUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">

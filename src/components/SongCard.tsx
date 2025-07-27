@@ -9,6 +9,7 @@ import Link from 'next/link';
 export default function SongCard({ song }: { song: Song }) {
   const stopPropagation = (e: React.MouseEvent) => e.stopPropagation();
   const amazonSearchUrl = `https://music.amazon.com/search/${encodeURIComponent(song.title + ' ' + song.artist)}`;
+  const appleSearchUrl = `https://music.apple.com/us/search?term=${encodeURIComponent(song.title + ' ' + song.artist)}`;
 
   return (
     <Card className="rounded-lg overflow-hidden shadow-sm transition-shadow hover:shadow-md bg-card border-2 border-border hover:border-primary/50">
@@ -57,13 +58,15 @@ export default function SongCard({ song }: { song: Song }) {
           >
             <Spotify className="h-5 w-5" /> Spotify
         </a>
-         <button
-            disabled
+         <a
+            href={appleSearchUrl}
+            target="_blank"
+            rel="noopener noreferrer"
             onClick={stopPropagation}
-            className="flex items-center justify-center gap-2 text-sm font-medium text-muted-foreground p-3 transition-colors border-x disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center justify-center gap-2 text-sm font-medium text-muted-foreground p-3 transition-colors border-x hover:bg-muted/50 hover:text-foreground"
           >
             <Apple className="h-5 w-5" /> Apple Music
-        </button>
+        </a>
          <a
             href={amazonSearchUrl}
             target="_blank"

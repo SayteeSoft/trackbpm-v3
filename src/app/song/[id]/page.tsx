@@ -8,6 +8,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Link from 'next/link';
 import Image from 'next/image';
+import AdBanner from '@/components/AdBanner';
 
 export default function SongPage({ params }: { params: { id: string } }) {
   const song = songs.find((s) => s.id === params.id);
@@ -89,6 +90,9 @@ export default function SongPage({ params }: { params: { id: string } }) {
                 </CardContent>
               </Card>
             </div>
+          </div>
+          <div className="my-8">
+            <AdBanner />
           </div>
           <Button variant="link" asChild className="mt-8 px-0">
             <Link href="/">← Back to search</Link>

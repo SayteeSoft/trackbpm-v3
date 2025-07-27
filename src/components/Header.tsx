@@ -140,11 +140,11 @@ export default function Header() {
       handleSearch(debouncedSearchTerm);
     } else {
       // This logic now correctly runs only on the client side, ensuring variety.
-      const getHourlySearchTerm = () => {
-        const hour = new Date().getHours();
-        return HOURLY_SEARCH_TERMS[hour % HOURLY_SEARCH_TERMS.length];
+      const getRandomSearchTerm = () => {
+          const randomIndex = Math.floor(Math.random() * HOURLY_SEARCH_TERMS.length);
+          return HOURLY_SEARCH_TERMS[randomIndex];
       };
-      handleSearch(getHourlySearchTerm());
+      handleSearch(getRandomSearchTerm());
     }
   }, [debouncedSearchTerm, isHomePage, handleSearch]);
 

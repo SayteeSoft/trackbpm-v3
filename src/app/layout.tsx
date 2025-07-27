@@ -3,6 +3,7 @@ import type {Metadata} from 'next';
 import './globals.css';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import Chatbot from '@/components/Chatbot';
 
 export const metadata: Metadata = {
   title: 'TRACK ⚡ BPM',
@@ -28,6 +29,7 @@ export default function RootLayout({
           <Header />
           <main className="flex-1">{children}</main>
           <Footer />
+          <Chatbot />
         </div>
       </body>
     </html>

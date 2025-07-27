@@ -29,7 +29,7 @@ export default function Footer() {
                     Site By <a href="https://web-developer.one/" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">Saytee Software</a>
                 </span>
                 <span className="hidden sm:inline">|</span>
-                <Link href="#" className="underline hover:text-primary">Privacy Policy</Link>
+                <Link href="/privacy-policy" className="underline hover:text-primary">Privacy Policy</Link>
                 <span className="hidden sm:inline">|</span>
                 <Link href="#" className="underline hover:text-primary">Terms of Service</Link>
             </div>

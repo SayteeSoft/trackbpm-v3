@@ -37,9 +37,15 @@ const exampleSongs = [
 
 function ExampleSong() {
   const [currentExample, setCurrentExample] = useState(exampleSongs[0]);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    // This logic runs only on the client
+    setIsClient(true);
+  }, []);
+  
+  useEffect(() => {
+    if (!isClient) return;
+
     const getHourlyExample = () => {
       const hour = new Date().getHours();
       const index = hour % exampleSongs.length;
@@ -48,7 +54,11 @@ function ExampleSong() {
     getHourlyExample();
     const intervalId = setInterval(getHourlyExample, 60 * 60 * 1000);
     return () => clearInterval(intervalId);
-  }, []);
+  }, [isClient]);
+
+  if (!isClient) {
+    return null; 
+  }
 
   return (
      <div className="text-center text-sm text-muted-foreground mt-4">
@@ -136,8 +146,10 @@ export default function Header() {
 
   useEffect(() => {
     if (!isHomePage || !isClient) {
-      setSongs([]);
-      setIsLoading(false);
+      if(!isHomePage) {
+        setSongs([]);
+        setIsLoading(false);
+      }
       return;
     }
 
@@ -182,7 +194,7 @@ export default function Header() {
             )}
           </div>
           <ExampleSong />
-          <SearchResults songs={songs} isLoading={isLoading} searchTerm={debouncedSearchTerm} />
+          {isClient && <SearchResults songs={songs} isLoading={isLoading} searchTerm={debouncedSearchTerm} />}
         </>
       )}
     </>

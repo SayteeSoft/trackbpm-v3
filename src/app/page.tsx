@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { initialSongs } from '@/lib/data';
 import { Input } from '@/components/ui/input';
 import SongCard from '@/components/SongCard';
@@ -58,7 +59,7 @@ export default function Home() {
       <Header />
       <main className="flex-1 w-full">
         <div className="container mx-auto px-4 py-8 max-w-4xl">
-          <div className="w-full max-w-[calc(42rem+60px)] mx-auto mb-2 relative -mt-16">
+          <div className="w-full max-w-[calc(42rem+90px)] mx-auto mb-2 relative -mt-16">
             <Input
               type="text"
               placeholder="Search by song title or artist name..."
@@ -73,10 +74,12 @@ export default function Home() {
           </p>
 
           {displayedSongs.length > 0 ? (
-            <div className="space-y-4">
+            <div className="space-y-4 max-w-[calc(42rem+90px)] mx-auto">
               {displayedSongs.map((song, index) => (
                 <React.Fragment key={song.id}>
-                  <SongCard song={song} />
+                   <Link href={`/song/${song.id}`} className="block hover:bg-muted/20">
+                    <SongCard song={song} />
+                  </Link>
                   {(index + 1) % 3 === 0 && (index + 1) < displayedSongs.length && <AdBanner />}
                 </React.Fragment>
               ))}

@@ -1,4 +1,4 @@
-// @ts-nocheck
+
 import { Song } from './types';
 
 const client_id = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID;
@@ -9,7 +9,10 @@ const basic = Buffer.from(`${client_id}:${client_secret}`).toString('base64');
 const TOKEN_ENDPOINT = 'https://accounts.spotify.com/api/token';
 const API_BASE = 'https://api.spotify.com/v1';
 
-let accessToken = {
+let accessToken: {
+    token: string | null,
+    expiresAt: number,
+} = {
     token: null,
     expiresAt: 0,
 };
@@ -36,7 +39,7 @@ const getAccessToken = async (): Promise<string> => {
             method: 'POST',
             headers: {
                 Authorization: `Basic ${basic}`,
-                'Content-Type': 'application/x-us-www-form-urlencoded',
+                'Content-Type': 'application/x-www-form-urlencoded',
             },
             body: 'grant_type=client_credentials',
         });
@@ -52,7 +55,7 @@ const getAccessToken = async (): Promise<string> => {
             // Set expiry to 5 minutes before it actually expires to be safe
             expiresAt: Date.now() + (data.expires_in - 300) * 1000,
         };
-        return accessToken.token;
+        return accessToken.token!;
     } catch (error) {
         console.error('Error fetching Spotify access token:', error);
         throw error; // Re-throw to be handled by the caller

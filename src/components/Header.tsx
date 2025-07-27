@@ -41,11 +41,6 @@ function ExampleSong() {
 
   useEffect(() => {
     setIsClient(true);
-  }, []);
-  
-  useEffect(() => {
-    if (!isClient) return;
-
     const getHourlyExample = () => {
       const hour = new Date().getHours();
       const index = hour % exampleSongs.length;
@@ -54,8 +49,8 @@ function ExampleSong() {
     getHourlyExample();
     const intervalId = setInterval(getHourlyExample, 60 * 60 * 1000);
     return () => clearInterval(intervalId);
-  }, [isClient]);
-
+  }, []);
+  
   if (!isClient) {
     return null; 
   }
@@ -70,9 +65,9 @@ function ExampleSong() {
 }
 
 
-function SearchResults({ songs, isLoading, searchTerm }: { songs: Song[], isLoading: boolean, searchTerm: string }) {
-  if (isLoading) {
-    return (
+function SearchResults({ songs, isLoading, searchTerm, initialLoad }: { songs: Song[], isLoading: boolean, searchTerm: string, initialLoad: boolean }) {
+  if (isLoading && initialLoad) {
+     return (
        <div className="flex justify-center py-12">
           <Loader2 className="h-8 w-8 text-muted-foreground animate-spin" />
        </div>
@@ -112,6 +107,7 @@ export default function Header() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isClient, setIsClient] = useState(false);
+  const [initialLoad, setInitialLoad] = useState(true);
 
   useEffect(() => {
     setIsClient(true);
@@ -121,6 +117,7 @@ export default function Header() {
     if (!term) {
         setSongs([]);
         setIsLoading(false);
+        if(initialLoad) setInitialLoad(false);
         return;
     }
     
@@ -135,11 +132,14 @@ export default function Header() {
       setSongs(result.songs || []);
     }
     setIsLoading(false);
-  }, []);
+    if(initialLoad) setInitialLoad(false);
+  }, [initialLoad]);
   
   useEffect(() => {
     const debounceTimeout = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
+      if (searchTerm) {
+        setDebouncedSearchTerm(searchTerm);
+      }
     }, 500);
     return () => clearTimeout(debounceTimeout);
   }, [searchTerm]);
@@ -155,14 +155,14 @@ export default function Header() {
 
     if (debouncedSearchTerm) {
       handleSearch(debouncedSearchTerm);
-    } else {
+    } else if (isClient && initialLoad) {
         const getRandomSearchTerm = () => {
             const randomIndex = Math.floor(Math.random() * HOURLY_SEARCH_TERMS.length);
             return HOURLY_SEARCH_TERMS[randomIndex];
         };
         handleSearch(getRandomSearchTerm());
     }
-  }, [debouncedSearchTerm, isHomePage, isClient, handleSearch]);
+  }, [debouncedSearchTerm, isHomePage, isClient, handleSearch, initialLoad]);
 
 
   return (
@@ -187,17 +187,16 @@ export default function Header() {
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-4 pr-12 py-7 rounded-md shadow-lg bg-card border-2 border-border text-lg"
             />
-            {isLoading ? (
+            {isLoading && !initialLoad ? (
               <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground animate-spin" />
             ) : (
               <Search className="absolute right-4 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground" />
             )}
           </div>
           <ExampleSong />
-          {isClient && <SearchResults songs={songs} isLoading={isLoading} searchTerm={debouncedSearchTerm || 'random'} />}
+          {isClient && <SearchResults songs={songs} isLoading={isLoading} searchTerm={debouncedSearchTerm} initialLoad={initialLoad} />}
         </>
       )}
     </>
   );
 }
-

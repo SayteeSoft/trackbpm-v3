@@ -20,20 +20,32 @@ export default function ContactPage() {
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setResult("Sending....");
-    const formData = new FormData(event.currentTarget);
-
+    
     const accessKey = "3ee1a7f3-b3d8-4b7d-a39a-3f40659920cb";
     if (!accessKey) {
         setResult("Access key is missing.");
         console.error("Web3Forms access key is not set in environment variables.");
         return;
     }
-    formData.append("access_key", accessKey);
+
+    const formData = {
+        access_key: accessKey,
+        name: name,
+        email: email,
+        message: message,
+        subject: "New Email from TRACK⚡BPM",
+        from_name: "TRACK⚡BPM Contact Form",
+        redirect: "https://web3forms.com/success",
+    };
 
     try {
         const response = await fetch("https://api.web3forms.com/submit", {
             method: "POST",
-            body: formData,
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify(formData),
         });
 
         const data = await response.json();
@@ -81,10 +93,6 @@ export default function ContactPage() {
             </CardHeader>
             <CardContent>
               <form onSubmit={onSubmit} className="space-y-6">
-                <input type="hidden" name="subject" value="New Email from TRACK⚡BPM" />
-                <input type="hidden" name="from_name" value="TRACK⚡BPM Contact Form" />
-                <input type="hidden" name="redirect" value="https://web3forms.com/success" />
-
                 <div className="space-y-2">
                   <Label htmlFor="name">Name</Label>
                   <Input 

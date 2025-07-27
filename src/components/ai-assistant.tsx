@@ -1,9 +1,10 @@
+
 'use client';
 
 import { useState } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { getSuggestedFeatures } from '@/lib/actions';
+import { getSuggestedFeatures } from '@/lib/ai-actions';
 import { Wand2, Loader2, AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 

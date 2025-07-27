@@ -11,7 +11,32 @@ import { Song } from '@/lib/types';
 import { Search, Loader2 } from 'lucide-react';
 import { searchSpotifyTracks } from '@/lib/actions';
 
-const DEFAULT_SEARCH_TERM = "Taylor Swift";
+const HOURLY_SEARCH_TERMS = [
+  "Taylor Swift",
+  "The Beatles",
+  "Queen",
+  "Michael Jackson",
+  "Nirvana",
+  "Eagles",
+  "David Bowie",
+  "Led Zeppelin",
+  "Pink Floyd",
+  "Bob Dylan",
+  "The Rolling Stones",
+  "Elton John",
+  "Stevie Wonder",
+  "Jimi Hendrix",
+  "Aretha Franklin",
+  "Marvin Gaye",
+  "James Brown",
+  "Elvis Presley",
+  "Bob Marley",
+  "U2",
+  "Radiohead",
+  "Coldplay",
+  "Beyoncé",
+  "Kendrick Lamar",
+];
 
 const exampleSongs = [
   { text: "The Beatles - All You Need Is Love", bpm: 103 },
@@ -116,8 +141,17 @@ export default function Header() {
   }, [searchTerm]);
 
   useEffect(() => {
+    const getHourlySearchTerm = () => {
+        const hour = new Date().getHours();
+        return HOURLY_SEARCH_TERMS[hour % HOURLY_SEARCH_TERMS.length];
+    }
+    
     if (isHomePage) {
-      handleSearch(debouncedSearchTerm || DEFAULT_SEARCH_TERM);
+      if (debouncedSearchTerm) {
+        handleSearch(debouncedSearchTerm);
+      } else {
+        handleSearch(getHourlySearchTerm());
+      }
     } else {
       setSongs([]);
       setIsLoading(false);

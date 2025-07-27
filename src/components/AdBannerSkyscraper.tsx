@@ -8,7 +8,7 @@ export default function AdBannerSkyscraper() {
       rel="noopener noreferrer" 
       className="sticky top-8 flex flex-col items-center justify-center h-[600px] w-[160px] bg-[#cacaca] rounded-md"
     >
-      <div className="text-center text-black">
+      <div className="text-center text-gray-700">
         <p className="text-lg font-bold">Advertise Here</p>
         <p className="text-sm">(160x600)</p>
       </div>

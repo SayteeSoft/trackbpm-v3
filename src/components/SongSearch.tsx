@@ -28,7 +28,7 @@ function SearchResults({ songs, isLoading, searchTerm, initialLoad }: { songs: S
     );
   }
 
-  if (songs.length === 0 && searchTerm) {
+  if (songs.length === 0 && searchTerm && !isLoading) {
     return (
         <div className="text-center text-sm text-muted-foreground py-12">
           <p>No results found for "{searchTerm}".</p>
@@ -98,19 +98,15 @@ export default function SongSearch() {
   }, [searchTerm]);
 
   useEffect(() => {
-    if (!isClient) return;
-
-    if (debouncedSearchTerm) {
+    if (isClient && initialLoad) {
+      const getRandomSearchTerm = () => {
+        const characters = 'abcdefghijklmnopqrstuvwxyz';
+        const randomChar = characters.charAt(Math.floor(Math.random() * characters.length));
+        return `${randomChar}`;
+      };
+      handleSearch(getRandomSearchTerm());
+    } else if (debouncedSearchTerm) {
       handleSearch(debouncedSearchTerm);
-    } else if (isClient && initialLoad) {
-        // Generate a random search query to get a variety of songs on each load.
-        const getRandomSearchTerm = () => {
-          const characters = 'abcdefghijklmnopqrstuvwxyz';
-          const randomChar = characters.charAt(Math.floor(Math.random() * characters.length));
-          // Adding a wildcard makes results more varied.
-          return `${randomChar}`;
-        };
-        handleSearch(getRandomSearchTerm());
     }
   }, [debouncedSearchTerm, isClient, handleSearch, initialLoad]);
 

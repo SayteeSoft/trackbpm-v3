@@ -5,6 +5,7 @@ import { Separator } from '@/components/ui/separator';
 import { Spotify, Apple, Amazon } from '@/components/icons';
 import Image from 'next/image';
 import Link from 'next/link';
+import { Clock, Music } from 'lucide-react';
 
 export default function SongCard({ song }: { song: Song }) {
   const stopPropagation = (e: React.MouseEvent) => e.stopPropagation();
@@ -28,20 +29,20 @@ export default function SongCard({ song }: { song: Song }) {
             <div className="flex-1 min-w-0">
               <p className="text-xs uppercase text-muted-foreground tracking-wider truncate">{song.artist}</p>
               <h3 className="text-2xl font-bold text-foreground truncate">{song.title}</h3>
-            </div>
-            <div className="hidden md:flex flex-shrink-0 justify-around text-center w-64">
-                <div className="w-1/3 px-1">
-                    <p className="text-xs text-muted-foreground">KEY</p>
-                    <p className="font-bold text-lg">{song.key || '-'}</p>
+              <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
+                <div className="flex items-center gap-1.5">
+                  <span className="font-bold text-lg text-primary">{song.bpm || '-'}</span>
+                  <span>BPM</span>
                 </div>
-                <div className="w-1/3 px-1">
-                    <p className="text-xs text-muted-foreground">DURATION</p>
-                    <p className="font-bold text-lg">{song.duration || '-'}</p>
+                 <div className="flex items-center gap-1.5">
+                   <Music className="h-4 w-4" />
+                  <span>{song.key || '-'}</span>
                 </div>
-                <div className="w-1/3 px-1">
-                    <p className="text-xs text-muted-foreground">BPM</p>
-                    <p className="font-bold text-lg">{song.bpm || '-'}</p>
+                <div className="flex items-center gap-1.5">
+                  <Clock className="h-4 w-4" />
+                  <span>{song.duration || '-'}</span>
                 </div>
+              </div>
             </div>
           </div>
         </CardContent>

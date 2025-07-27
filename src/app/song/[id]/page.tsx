@@ -130,7 +130,7 @@ export default async function SongPage({ params }: { params: { id: string } }) {
             </div>
         </div>
         
-        <div className="my-12">
+        <div className="my-12 max-w-[calc(42rem+90px)] mx-auto">
           <AdBanner />
         </div>
        
@@ -138,4 +138,3 @@ export default async function SongPage({ params }: { params: { id: string } }) {
     </div>
   );
 }
-

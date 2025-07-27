@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from 'react';
-import { songs } from '@/lib/data';
+import React, { useState, useEffect } from 'react';
+import { initialSongs } from '@/lib/data';
 import { Input } from '@/components/ui/input';
 import SongCard from '@/components/SongCard';
 import Footer from '@/components/Footer';
@@ -10,20 +10,49 @@ import AdBanner from '@/components/AdBanner';
 import { Song } from '@/lib/types';
 import { Search } from 'lucide-react';
 import Link from 'next/link';
+import { getSpotifyTrack } from '@/lib/spotify';
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [songs, setSongs] = useState<Song[]>(initialSongs);
+  const [filteredSongs, setFilteredSongs] = useState<Song[]>([]);
+
+  useEffect(() => {
+    const fetchSongImages = async () => {
+      const songsWithImages = await Promise.all(
+        initialSongs.map(async (song) => {
+          try {
+            const track = await getSpotifyTrack(`${song.title} ${song.artist}`);
+            if (track && track.album.images.length > 0) {
+              return { ...song, imageUrl: track.album.images[0].url };
+            }
+          } catch (error) {
+            console.error(`Failed to fetch image for ${song.title}`, error);
+          }
+          return song; // Return original song if fetch fails
+        })
+      );
+      setSongs(songsWithImages);
+    };
+
+    fetchSongImages();
+  }, []);
+
+  useEffect(() => {
+    const lowercasedTerm = searchTerm.toLowerCase();
+    const results = songs.filter(
+      (song) =>
+        song.title.toLowerCase().includes(lowercasedTerm) ||
+        song.artist.toLowerCase().includes(lowercasedTerm)
+    );
+    setFilteredSongs(results);
+  }, [searchTerm, songs]);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const term = event.target.value.toLowerCase();
-    setSearchTerm(term);
+    setSearchTerm(event.target.value);
   };
-
-  const filteredSongs = songs.filter(
-    (song) =>
-      song.title.toLowerCase().includes(searchTerm) ||
-      song.artist.toLowerCase().includes(searchTerm)
-  );
+  
+  const displayedSongs = searchTerm.length > 0 ? filteredSongs : songs;
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -44,34 +73,21 @@ export default function Home() {
             e.g., <span className="font-semibold text-foreground">Sabrina Carpenter - Espresso</span>
           </p>
 
-          {searchTerm.length > 0 && filteredSongs.length > 0 && (
+          {displayedSongs.length > 0 ? (
             <div className="space-y-4">
-              <h2 className="text-xl font-bold mb-4">Search Results</h2>
-              {filteredSongs.map((song) => (
-                <Link href={`/song/${song.id}`} key={song.id} className="block">
-                  <SongCard song={song} />
-                </Link>
-              ))}
-            </div>
-          )}
-
-          {searchTerm.length > 0 && filteredSongs.length === 0 && (
-             <div className="text-center text-muted-foreground mt-10">
-               <p>No songs found for your search.</p>
-             </div>
-          )}
-          
-          {searchTerm.length === 0 && (
-            <div className="space-y-4">
-              {songs.map((song, index) => (
+              {displayedSongs.map((song, index) => (
                 <React.Fragment key={song.id}>
                   <Link href={`/song/${song.id}`} className="block">
                     <SongCard song={song} />
                   </Link>
-                  {(index + 1) % 3 === 0 && (index + 1) < songs.length && <AdBanner />}
+                  {(index + 1) % 3 === 0 && (index + 1) < displayedSongs.length && <AdBanner />}
                 </React.Fragment>
               ))}
             </div>
+          ) : (
+             <div className="text-center text-muted-foreground mt-10">
+               <p>No songs found for your search.</p>
+             </div>
           )}
 
         </div>

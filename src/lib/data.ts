@@ -1,6 +1,6 @@
 import { Song } from './types';
 
-export const songs: Song[] = [
+export const initialSongs: Song[] = [
   {
     id: '1',
     title: 'Espresso',
@@ -8,7 +8,7 @@ export const songs: Song[] = [
     bpm: '104',
     key: 'C major',
     duration: '02:55',
-    imageUrl: 'https://i.scdn.co/image/ab67616d0000b273f0f753592471c6c518880f08',
+    imageUrl: 'https://placehold.co/100x100.png',
     description: 'A classic rock anthem about an astronaut.',
     longDescription:
       'Released in 1969, "Space Oddity" is one of David Bowie\'s signature songs. It tells the story of Major Tom, an astronaut who cuts off communication with Earth and floats into space.',
@@ -155,3 +155,7 @@ export const songs: Song[] = [
     },
   },
 ];
+
+// Renamed from 'songs' to 'initialSongs' to reflect that it's the base data
+// before being enriched with dynamic data from Spotify.
+export const songs = initialSongs;

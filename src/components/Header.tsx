@@ -47,12 +47,12 @@ function SearchResults({ songs, isLoading, searchTerm }: { songs: Song[], isLoad
   if (searchTerm.length > 0 && !isLoading && songs.length === 0) {
     return (
       <p className="text-center text-sm text-muted-foreground py-12">
-        No results found for "{searchTerm}".
+        No results found for "{searchTerm}". Please try another search.
       </p>
     );
   }
   
-  if (songs.length === 0 && !isLoading) {
+  if (songs.length === 0 && !isLoading && searchTerm === '') {
       return (
           <p className="text-center text-sm text-muted-foreground py-12">
               For example: <span className="font-semibold text-foreground">{currentExample.text}</span> (which is {currentExample.bpm} BPM, by the way)
@@ -72,7 +72,7 @@ function SearchResults({ songs, isLoading, searchTerm }: { songs: Song[], isLoad
           ))}
         </div>
       )}
-       {isLoading && (
+       {isLoading && songs.length > 0 && (
          <div className="flex justify-center mt-4">
             <Loader2 className="h-8 w-8 text-muted-foreground animate-spin" />
          </div>
@@ -119,22 +119,23 @@ export default function Header() {
       return;
     };
     
-    if (isHomePage && searchTerm === '') {
-      setIsLoading(true);
+    // Initial load with default term
+    if (isHomePage && searchTerm === '' && songs.length === 0 && !isLoading) {
       handleSearch(DEFAULT_SEARCH_TERM);
     }
     
     const debounceTimeout = setTimeout(() => {
-      if (searchTerm && searchTerm !== DEFAULT_SEARCH_TERM) {
+        // User is typing a search
+      if (searchTerm) {
         handleSearch(searchTerm);
-      } else if (!searchTerm) {
-         setSongs([]);
-         setIsLoading(false);
+      } else if (!searchTerm && songs.length > 0) {
+        // User cleared the search, so clear the songs
+        setSongs([]);
       }
     }, 500);
 
     return () => clearTimeout(debounceTimeout);
-  }, [searchTerm, isHomePage, handleSearch]);
+  }, [searchTerm, isHomePage, handleSearch, songs.length, isLoading]);
 
 
   return (
@@ -154,7 +155,7 @@ export default function Header() {
             <Input
             type="text"
             placeholder="Search by song title or artist name..."
-            value={searchTerm === DEFAULT_SEARCH_TERM ? '' : searchTerm}
+            value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-4 pr-12 py-7 rounded-md shadow-lg bg-card border-2 border-border text-lg"
             />

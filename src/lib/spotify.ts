@@ -61,8 +61,8 @@ const transformTrackData = (track, features): Song => {
         id: track.id,
         title: track.name,
         artist: track.artists.map((a) => a.name).join(', '),
-        bpm: features ? Math.round(features.tempo).toString() : 'N/A',
-        key: (features && features.key !== -1) ? formatKey(features.key, features.mode) : 'N/A',
+        bpm: features && features.tempo ? Math.round(features.tempo).toString() : 'N/A',
+        key: (features && features.key !== -1 && features.mode !== undefined) ? formatKey(features.key, features.mode) : 'N/A',
         duration: formatDuration(track.duration_ms),
         imageUrl: track.album.images?.[0]?.url || 'https://placehold.co/100x100.png',
     };
@@ -94,8 +94,14 @@ export const searchTracks = async (query: string): Promise<Song[]> => {
             Authorization: `Bearer ${token}`,
         },
     });
+    
+    if (!featuresResponse.ok) {
+         // If features fail, return tracks with N/A for BPM and Key
+         console.error('Failed to get audio features, returning tracks without them.');
+         return data.tracks.items.map(track => transformTrackData(track, null));
+    }
 
-    const featuresData = featuresResponse.ok ? await featuresResponse.json() : { audio_features: [] };
+    const featuresData = await featuresResponse.json();
     const featuresMap = new Map(featuresData.audio_features.filter(f => f).map(f => [f.id, f]));
 
     return data.tracks.items.map(track => {
@@ -123,7 +129,9 @@ export const getTrackDetails = async (trackId: string): Promise<Song> => {
     });
 
     if (!featuresResponse.ok) {
-        throw new Error('Failed to get audio features from Spotify');
+        console.error('Failed to get audio features for track, returning details without them.');
+        const trackData = await trackResponse.json();
+        return transformTrackData(trackData, null);
     }
 
     const trackData = await trackResponse.json();

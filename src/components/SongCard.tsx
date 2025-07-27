@@ -29,16 +29,16 @@ export default function SongCard({ song }: { song: Song }) {
               <p className="text-xs uppercase text-muted-foreground tracking-wider truncate">{song.artist}</p>
               <h3 className="text-2xl font-bold text-foreground truncate">{song.title}</h3>
             </div>
-            <div className="hidden md:flex flex-shrink-0 justify-around text-center w-60">
-                <div className="w-1/3">
+            <div className="hidden md:flex flex-shrink-0 justify-around text-center w-64">
+                <div className="w-1/3 px-1">
                     <p className="text-xs text-muted-foreground">KEY</p>
                     <p className="font-bold text-lg">{song.key || '-'}</p>
                 </div>
-                <div className="w-1/3">
+                <div className="w-1/3 px-1">
                     <p className="text-xs text-muted-foreground">DURATION</p>
                     <p className="font-bold text-lg">{song.duration || '-'}</p>
                 </div>
-                <div className="w-1/3">
+                <div className="w-1/3 px-1">
                     <p className="text-xs text-muted-foreground">BPM</p>
                     <p className="font-bold text-lg">{song.bpm || '-'}</p>
                 </div>

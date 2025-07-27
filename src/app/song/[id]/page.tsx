@@ -1,5 +1,6 @@
+
 import { notFound } from 'next/navigation';
-import { songs } from '@/lib/data';
+import { getSpotifyTrackDetails } from '@/lib/actions';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Spotify, Apple, Amazon } from '@/components/icons';
@@ -10,12 +11,17 @@ import Link from 'next/link';
 import Image from 'next/image';
 import AdBanner from '@/components/AdBanner';
 
-export default function SongPage({ params }: { params: { id: string } }) {
-  const song = songs.find((s) => s.id === params.id);
+export default async function SongPage({ params }: { params: { id: string } }) {
+  const result = await getSpotifyTrackDetails(params.id);
 
-  if (!song) {
+  if (result.error || !result.song) {
+    console.error(result.error);
     notFound();
   }
+
+  const { song } = result;
+
+  const amazonSearchUrl = `https://music.amazon.com/search/${encodeURIComponent(song.title + ' ' + song.artist)}`;
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -32,7 +38,9 @@ export default function SongPage({ params }: { params: { id: string } }) {
                 <CardContent className="space-y-6 mt-6 p-0">
                   <div>
                     <h3 className="text-lg font-semibold mb-2">About this song</h3>
-                    <p className="text-muted-foreground">{song.longDescription}</p>
+                    <p className="text-muted-foreground">
+                        This data is fetched from Spotify. More details can be found on the official pages.
+                    </p>
                     <Separator className="my-6" />
                      <a href={`https://www.google.com/search?q=${encodeURIComponent(song.title + ' ' + song.artist + ' BPM')}`} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline text-sm">
                         Find BPM on another source
@@ -42,17 +50,15 @@ export default function SongPage({ params }: { params: { id: string } }) {
                     <h3 className="text-lg font-semibold mb-3">Listen on</h3>
                     <div className="flex flex-col sm:flex-row gap-4">
                       <Button variant="outline" asChild>
-                        <a href={song.links.spotify} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
+                        <a href={`https://open.spotify.com/track/${song.id}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
                           <Spotify className="h-6 w-6" /> Spotify
                         </a>
                       </Button>
-                      <Button variant="outline" asChild>
-                        <a href={song.links.appleMusic} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
-                          <Apple className="h-6 w-6" /> Apple Music
-                        </a>
+                      <Button variant="outline" disabled>
+                        <Apple className="h-6 w-6" /> Apple Music
                       </Button>
                       <Button variant="outline" asChild>
-                        <a href={song.links.amazonMusic} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
+                        <a href={amazonSearchUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
                           <Amazon className="h-6 w-6" /> Amazon
                         </a>
                       </Button>
@@ -86,7 +92,7 @@ export default function SongPage({ params }: { params: { id: string } }) {
               </Card>
               <Card className="bg-card border-border">
                 <CardContent className="p-4">
-                    <Image src={song.imageUrl} alt={`${song.title} album art`} width={300} height={300} className="rounded-md w-full h-auto" data-ai-hint="album cover"/>
+                    <Image src={song.imageUrl || 'https://placehold.co/300x300.png'} alt={`${song.title} album art`} width={300} height={300} className="rounded-md w-full h-auto" data-ai-hint="album cover"/>
                 </CardContent>
               </Card>
             </div>

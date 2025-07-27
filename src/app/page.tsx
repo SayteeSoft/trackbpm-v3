@@ -1,59 +1,50 @@
 
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { initialSongs } from '@/lib/data';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Input } from '@/components/ui/input';
 import SongCard from '@/components/SongCard';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import AdBanner from '@/components/AdBanner';
 import { Song } from '@/lib/types';
-import { Search } from 'lucide-react';
-import { getSpotifyTrack } from '@/lib/spotify';
+import { Search, Loader2 } from 'lucide-react';
+import { searchSpotifyTracks, getSpotifyTrackDetails } from '@/lib/actions';
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [songs, setSongs] = useState<Song[]>(initialSongs);
-  const [filteredSongs, setFilteredSongs] = useState<Song[]>([]);
+  const [songs, setSongs] = useState<Song[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchSongImages = async () => {
-      const songsWithImages = await Promise.all(
-        initialSongs.map(async (song) => {
-          try {
-            const track = await getSpotifyTrack(`${song.title} ${song.artist}`);
-            if (track && track.album.images.length > 0) {
-              return { ...song, imageUrl: track.album.images[0].url };
-            }
-          } catch (error) {
-            console.error(`Failed to fetch image for ${song.title}`, error);
-          }
-          return song; // Return original song if fetch fails
-        })
-      );
-      setSongs(songsWithImages);
-    };
+  const handleSearch = useCallback(async (term: string) => {
+    if (term.length < 3) {
+      setSongs([]);
+      setError(null);
+      return;
+    }
 
-    fetchSongImages();
+    setIsLoading(true);
+    setError(null);
+    const result = await searchSpotifyTracks(term);
+    if (result.error) {
+      setError(result.error);
+      setSongs([]);
+    } else {
+      setSongs(result.songs || []);
+    }
+    setIsLoading(false);
   }, []);
 
   useEffect(() => {
-    const lowercasedTerm = searchTerm.toLowerCase();
-    const results = songs.filter(
-      (song) =>
-        song.title.toLowerCase().includes(lowercasedTerm) ||
-        song.artist.toLowerCase().includes(lowercasedTerm)
-    );
-    setFilteredSongs(results);
-  }, [searchTerm, songs]);
+    const debounceTimeout = setTimeout(() => {
+      handleSearch(searchTerm);
+    }, 500);
 
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(event.target.value);
-  };
-  
-  const displayedSongs = searchTerm.length > 0 ? filteredSongs : songs;
+    return () => clearTimeout(debounceTimeout);
+  }, [searchTerm, handleSearch]);
+
+  const displayedSongs = songs;
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -65,16 +56,27 @@ export default function Home() {
               type="text"
               placeholder="Search by song title or artist name..."
               value={searchTerm}
-              onChange={handleSearch}
+              onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-4 pr-12 py-7 rounded-md shadow-lg bg-card border-2 border-border text-lg"
             />
-            <Search className="absolute right-4 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground" />
+             {isLoading ? (
+                <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground animate-spin" />
+              ) : (
+                <Search className="absolute right-4 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground" />
+             )}
           </div>
-          <p className="text-center text-sm text-muted-foreground mb-12">
-            e.g., <span className="font-semibold text-foreground">Sabrina Carpenter - Espresso</span>
-          </p>
+           {searchTerm.length > 0 && !isLoading && displayedSongs.length === 0 && (
+             <p className="text-center text-sm text-muted-foreground mb-12">
+               No results found for "{searchTerm}".
+             </p>
+           )}
+           {searchTerm.length === 0 && !isLoading && (
+              <p className="text-center text-sm text-muted-foreground mb-12">
+                e.g., <span className="font-semibold text-foreground">Sabrina Carpenter - Espresso</span>
+              </p>
+           )}
 
-          {displayedSongs.length > 0 ? (
+          {displayedSongs.length > 0 && (
             <div className="space-y-4 max-w-[calc(42rem+90px)] mx-auto mb-8">
               {displayedSongs.map((song, index) => (
                 <React.Fragment key={song.id}>
@@ -83,12 +85,7 @@ export default function Home() {
                 </React.Fragment>
               ))}
             </div>
-          ) : (
-             <div className="text-center text-muted-foreground mt-10">
-               <p>No songs found for your search.</p>
-             </div>
           )}
-
         </div>
       </main>
       <Footer />

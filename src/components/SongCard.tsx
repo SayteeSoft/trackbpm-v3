@@ -1,3 +1,4 @@
+
 import { Song } from '@/lib/types';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
@@ -7,6 +8,7 @@ import Link from 'next/link';
 
 export default function SongCard({ song }: { song: Song }) {
   const stopPropagation = (e: React.MouseEvent) => e.stopPropagation();
+  const amazonSearchUrl = `https://music.amazon.com/search/${encodeURIComponent(song.title + ' ' + song.artist)}`;
 
   return (
     <Card className="rounded-lg overflow-hidden shadow-sm transition-shadow hover:shadow-md bg-card border-2 border-border hover:border-primary/50">
@@ -15,7 +17,7 @@ export default function SongCard({ song }: { song: Song }) {
           <div className="flex items-center gap-6">
             <div className="relative w-20 h-20 flex-shrink-0">
               <Image
-                src={song.imageUrl}
+                src={song.imageUrl || 'https://placehold.co/100x100.png'}
                 alt={`${song.title} album art`}
                 layout="fill"
                 objectFit="cover"
@@ -47,7 +49,7 @@ export default function SongCard({ song }: { song: Song }) {
       <Separator />
       <div className="grid grid-cols-3">
          <a
-            href={song.links.spotify}
+            href={`https://open.spotify.com/track/${song.id}`}
             target="_blank"
             rel="noopener noreferrer"
             onClick={stopPropagation}
@@ -55,17 +57,15 @@ export default function SongCard({ song }: { song: Song }) {
           >
             <Spotify className="h-5 w-5" /> Spotify
         </a>
-         <a
-            href={song.links.appleMusic}
-            target="_blank"
-            rel="noopener noreferrer"
+         <button
+            disabled
             onClick={stopPropagation}
-            className="flex items-center justify-center gap-2 text-sm font-medium text-muted-foreground hover:bg-muted/50 hover:text-foreground p-3 transition-colors border-x"
+            className="flex items-center justify-center gap-2 text-sm font-medium text-muted-foreground p-3 transition-colors border-x disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Apple className="h-5 w-5" /> Apple Music
-        </a>
+        </button>
          <a
-            href={song.links.amazonMusic}
+            href={amazonSearchUrl}
             target="_blank"
             rel="noopener noreferrer"
             onClick={stopPropagation}

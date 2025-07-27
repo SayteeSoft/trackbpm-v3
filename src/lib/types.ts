@@ -1,3 +1,4 @@
+
 export type Song = {
   id: string;
   title: string;
@@ -6,9 +7,9 @@ export type Song = {
   key: string;
   duration: string;
   imageUrl: string;
-  description: string;
-  longDescription: string;
-  links: {
+  description?: string; // Optional now
+  longDescription?: string; // Optional now
+  links?: { // Optional now
     spotify: string;
     appleMusic: string;
     amazonMusic: string;

@@ -4,10 +4,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Input } from '@/components/ui/input';
 import SongCard from '@/components/SongCard';
-import AdBanner from '@/components/AdBanner';
 import { Song } from '@/lib/types';
 import { Search, Loader2 } from 'lucide-react';
 import { searchSpotifyTracks } from '@/lib/actions';
+import Link from 'next/link';
+import Image from 'next/image';
 
 function ExampleSong() {
   return (
@@ -46,7 +47,20 @@ function SearchResults({ songs, isLoading, searchTerm }: { songs: Song[], isLoad
         {songs.map((song, index) => (
           <React.Fragment key={song.id}>
             <SongCard song={song} />
-            {(index + 1) === 3 && <AdBanner />}
+            {(index + 1) === 3 && (
+               <div className="my-4">
+                 <a href="https://www.youtube.com/@larrysoundz" target="_blank" rel="noopener noreferrer">
+                    <Image
+                        src="/banners/website-banner-001(728x90).jpg"
+                        alt="Larry Soundz YouTube Channel Banner"
+                        width={728}
+                        height={90}
+                        className="mx-auto rounded-md"
+                        data-ai-hint="advertisement banner"
+                    />
+                 </a>
+               </div>
+            )}
           </React.Fragment>
         ))}
       </div>
@@ -59,7 +73,7 @@ export default function SongSearch() {
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const [songs, setSongs] = useState<Song[]>([]);
-  const [isLoading, setIsLoading] = useState(true); // Start loading by default
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const handleSearch = useCallback(async (term: string) => {
@@ -84,8 +98,6 @@ export default function SongSearch() {
   
   useEffect(() => {
     const debounceTimeout = setTimeout(() => {
-      // Only set the debounced term if the user has typed something.
-      // The initial search is handled by the other useEffect.
       if (searchTerm) {
         setDebouncedSearchTerm(searchTerm);
       }
@@ -95,17 +107,15 @@ export default function SongSearch() {
 
 
   useEffect(() => {
-    // This effect runs only when debouncedSearchTerm changes
     if (debouncedSearchTerm) {
       handleSearch(debouncedSearchTerm);
     }
   }, [debouncedSearchTerm, handleSearch]);
 
   useEffect(() => {
-    // This effect runs only once on mount to get the initial songs
     handleSearch('popular');
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Empty dependency array ensures this runs only once
+  }, []);
 
   return (
     <>

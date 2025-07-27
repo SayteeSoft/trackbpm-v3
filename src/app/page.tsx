@@ -58,7 +58,7 @@ export default function Home() {
       <Header />
       <main className="flex-1 w-full">
         <div className="container mx-auto px-4 py-8 max-w-4xl">
-          <div className="w-full max-w-[calc(42rem+10px)] mx-auto mb-2 relative -mt-16">
+          <div className="w-full max-w-[calc(42rem+30px)] mx-auto mb-2 relative -mt-16">
             <Input
               type="text"
               placeholder="Search by song title or artist name..."

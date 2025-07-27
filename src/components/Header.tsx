@@ -26,44 +26,15 @@ const HOURLY_SEARCH_TERMS = [
   "OutKast", "The Notorious B.I.G.", "Tupac Shakur", "Jay-Z", "Nas"
 ];
 
-const exampleSongs = [
-  { text: "The Beatles - All You Need Is Love", bpm: 103 },
-  { text: "Queen - Bohemian Rhapsody", bpm: 72 },
-  { text: "Michael Jackson - Billie Jean", bpm: 117 },
-  { text: "Nirvana - Smells Like Teen Spirit", bpm: 117 },
-  { text: "Eagles - Hotel California", bpm: 75 },
-  { text: "David Bowie - Space Oddity", bpm: 81 },
-];
-
 function ExampleSong() {
-  const [currentExample, setCurrentExample] = useState(exampleSongs[0]);
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-    const getHourlyExample = () => {
-      const hour = new Date().getHours();
-      const index = hour % exampleSongs.length;
-      setCurrentExample(exampleSongs[index]);
-    };
-    getHourlyExample();
-    const intervalId = setInterval(getHourlyExample, 60 * 60 * 1000);
-    return () => clearInterval(intervalId);
-  }, []);
-  
-  if (!isClient) {
-    return null; 
-  }
-
   return (
      <div className="text-center text-sm text-muted-foreground mt-4">
         <p>
-            For example: <span className="font-semibold text-foreground">{currentExample.text}</span> (which is {currentExample.bpm} BPM, by the way)
+            For example: <span className="font-semibold text-foreground">david bowie - space oddity</span> (which is 81 BPM, by the way)
         </p>
     </div>
   );
 }
-
 
 function SearchResults({ songs, isLoading, searchTerm, initialLoad }: { songs: Song[], isLoading: boolean, searchTerm: string, initialLoad: boolean }) {
   if (isLoading && initialLoad) {
@@ -82,13 +53,17 @@ function SearchResults({ songs, isLoading, searchTerm, initialLoad }: { songs: S
     );
   }
   
+  if (songs.length === 0 && !searchTerm && !isLoading) {
+    return null;
+  }
+  
   return (
     <div className='container mx-auto px-4 py-8 max-w-4xl'>
       <div className="space-y-4 max-w-[calc(42rem+90px)] mx-auto mb-8">
         {songs.map((song, index) => (
           <React.Fragment key={song.id}>
             <SongCard song={song} />
-            {(index + 1) % 3 === 0 && <AdBanner />}
+            {(index + 1) === 3 && <AdBanner />}
           </React.Fragment>
         ))}
       </div>
@@ -137,9 +112,7 @@ export default function Header() {
   
   useEffect(() => {
     const debounceTimeout = setTimeout(() => {
-      if (searchTerm) {
         setDebouncedSearchTerm(searchTerm);
-      }
     }, 500);
     return () => clearTimeout(debounceTimeout);
   }, [searchTerm]);
@@ -182,7 +155,7 @@ export default function Header() {
           <div className="w-full max-w-[calc(42rem+90px)] mx-auto mb-2 relative -mt-[29px]">
             <Input
               type="text"
-              placeholder="Search by song title or artist name..."
+              placeholder="type a song, get a bpm"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-4 pr-12 py-7 rounded-md shadow-lg bg-card border-2 border-border text-lg"

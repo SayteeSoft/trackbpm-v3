@@ -36,7 +36,7 @@ function SearchResults({ songs, isLoading, searchTerm, initialLoad }: { songs: S
     );
   }
   
-  if (songs.length === 0 && !searchTerm && !isLoading) {
+  if (songs.length === 0 && !isLoading) {
     return null;
   }
   
@@ -72,7 +72,6 @@ export default function SongSearch() {
     if (!term) {
         setSongs([]);
         setIsLoading(false);
-        if(initialLoad) setInitialLoad(false);
         return;
     }
     
@@ -87,28 +86,36 @@ export default function SongSearch() {
       setSongs(result.songs || []);
     }
     setIsLoading(false);
-    if(initialLoad) setInitialLoad(false);
+    if (initialLoad) setInitialLoad(false);
   }, [initialLoad]);
   
   useEffect(() => {
     const debounceTimeout = setTimeout(() => {
-        setDebouncedSearchTerm(searchTerm);
+        if (searchTerm !== debouncedSearchTerm) {
+            setDebouncedSearchTerm(searchTerm);
+        }
     }, 500);
     return () => clearTimeout(debounceTimeout);
-  }, [searchTerm]);
+  }, [searchTerm, debouncedSearchTerm]);
+
 
   useEffect(() => {
-    if (isClient && initialLoad) {
+    if (debouncedSearchTerm) {
+        handleSearch(debouncedSearchTerm);
+    }
+  }, [debouncedSearchTerm, handleSearch]);
+
+  useEffect(() => {
+    if(isClient) {
       const getRandomSearchTerm = () => {
         const characters = 'abcdefghijklmnopqrstuvwxyz';
         const randomChar = characters.charAt(Math.floor(Math.random() * characters.length));
         return `${randomChar}`;
       };
       handleSearch(getRandomSearchTerm());
-    } else if (debouncedSearchTerm) {
-      handleSearch(debouncedSearchTerm);
     }
-  }, [debouncedSearchTerm, isClient, handleSearch, initialLoad]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isClient]);
 
   return (
     <>
@@ -127,7 +134,7 @@ export default function SongSearch() {
         )}
       </div>
       <ExampleSong />
-      {isClient && <SearchResults songs={songs} isLoading={isLoading} searchTerm={debouncedSearchTerm} initialLoad={initialLoad} />}
+      {isClient && <SearchResults songs={songs} isLoading={isLoading} searchTerm={debouncedSearchTerm || ' '} initialLoad={initialLoad} />}
     </>
   );
 }

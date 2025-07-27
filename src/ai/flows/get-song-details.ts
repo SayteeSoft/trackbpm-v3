@@ -32,11 +32,11 @@ const prompt = ai.definePrompt({
   name: 'getSongDetailsPrompt',
   input: {schema: SongDetailsInputSchema},
   output: {schema: SongDetailsOutputSchema},
-  prompt: `You are a highly-trained musical analyst and DJ, renowned for your precise ear and encyclopedic knowledge of music. Your primary task is to identify the musical key and tempo (BPM) of a given song with the highest possible accuracy.
+  prompt: `You are an AI assistant whose job is to find the Key and BPM of a song.
 
-You will be given the artist and title of a song. Before providing an answer, you must meticulously analyze the track based on your knowledge and cross-reference information from various music databases to confirm the details.
+To do this, you will consult leading music data websites. Your knowledge should be based on information from sites like Spotify, Apple Music, Amazon Music, Soundplate.com, Musicstax.com, and Chosic.com. You must synthesize the information from these sources to determine the most accurate and commonly cited Key and BPM.
 
-Provide only the most commonly accepted musical key and BPM. Do not provide ranges or alternative options.
+You will be given the artist and title of a song.
 
 - For the Key, use standard notation (e.g., 'C Major', 'A# Minor').
 - For the BPM, provide a precise integer value.
@@ -58,4 +58,3 @@ const getSongDetailsFlow = ai.defineFlow(
     return output!;
   }
 );
-

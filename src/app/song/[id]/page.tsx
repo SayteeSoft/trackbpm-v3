@@ -81,7 +81,7 @@ export default async function SongPage({ params: { id } }: { params: { id: strin
                     </div>
                     <div className="flex-1 mt-5 sm:mt-1 text-center sm:text-left">
                         <p className="text-lg font-medium text-foreground mb-2">{song.artist}</p>
-                        <h1 className="text-[43px] sm:text-[67px] font-bold tracking-tighter text-foreground leading-tight pr-1">{song.title}</h1>
+                        <h1 className="text-[42px] sm:text-[66px] font-bold tracking-tighter text-foreground leading-tight pr-[5px]">{song.title}</h1>
                         {song.bpm && (
                         <Badge variant="destructive" className="mt-4">
                             <span className="mr-2">•</span> {Math.round(parseFloat(song.bpm))} BPM

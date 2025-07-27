@@ -48,25 +48,13 @@ function SearchResults({ songs, isLoading, searchTerm }: { songs: Song[], isLoad
         {songs.map((song, index) => (
           <React.Fragment key={song.id}>
             <SongCard song={song} />
-            {(index + 1) === 3 && (
-               <div className="my-4">
-                 <a href="https://www.youtube.com/@larrysoundz" target="_blank" rel="noopener noreferrer">
-                    <Image
-                        src="/banners/website-banner-001(728x90).jpg"
-                        alt="Larry Soundz YouTube Channel Banner"
-                        width={728}
-                        height={90}
-                        className="mx-auto rounded-md"
-                        data-ai-hint="advertisement banner"
-                    />
-                 </a>
+            {(index + 1) % 3 === 0 && (
+               <div className="my-8">
+                 <AdBanner />
                </div>
             )}
           </React.Fragment>
         ))}
-        <div className="my-8">
-          <AdBanner />
-        </div>
       </div>
     </div>
   );

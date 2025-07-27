@@ -31,7 +31,7 @@ export default function Footer() {
                 <span className="hidden sm:inline">|</span>
                 <Link href="/privacy-policy" className="underline hover:text-primary">Privacy Policy</Link>
                 <span className="hidden sm:inline">|</span>
-                <Link href="#" className="underline hover:text-primary">Terms of Service</Link>
+                <Link href="/terms-of-service" className="underline hover:text-primary">Terms of Service</Link>
             </div>
         </div>
       </div>

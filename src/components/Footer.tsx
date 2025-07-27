@@ -1,3 +1,4 @@
+
 import Link from "next/link";
 import { Separator } from "./ui/separator";
 import { Spotify } from "./icons";
@@ -5,8 +6,8 @@ import { Spotify } from "./icons";
 export default function Footer() {
   return (
     <footer className="w-full mt-auto">
-      <div className="bg-[#151515] py-8">
-        <div className="container mx-auto px-4 text-center text-sm text-white space-y-4">
+      <div className="bg-[#171717] py-8">
+        <div className="container mx-auto px-4 text-center text-sm text-[#e9e9e9] space-y-4">
             <div>
               <p>TRACK⚡BPM helps you find the BPM and Key for any song.</p>
               <p>We hope you find our service helpful.</p>

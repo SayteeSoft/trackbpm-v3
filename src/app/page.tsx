@@ -9,7 +9,6 @@ import Header from '@/components/Header';
 import AdBanner from '@/components/AdBanner';
 import { Song } from '@/lib/types';
 import { Search } from 'lucide-react';
-import Link from 'next/link';
 import { getSpotifyTrack } from '@/lib/spotify';
 
 export default function Home() {
@@ -77,9 +76,7 @@ export default function Home() {
             <div className="space-y-4">
               {displayedSongs.map((song, index) => (
                 <React.Fragment key={song.id}>
-                  <Link href={`/song/${song.id}`} className="block">
-                    <SongCard song={song} />
-                  </Link>
+                  <SongCard song={song} />
                   {(index + 1) % 3 === 0 && (index + 1) < displayedSongs.length && <AdBanner />}
                 </React.Fragment>
               ))}

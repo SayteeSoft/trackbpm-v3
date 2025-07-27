@@ -19,17 +19,17 @@ export default function SongCard({ song }: { song: Song }) {
           <p className="font-semibold">BPM: {song.bpm}</p>
         </div>
         <div className="flex gap-2 w-full">
-          <Button variant="outline" className="flex-1 hover:bg-gray-700" asChild>
+          <Button variant="outline" className="flex-1 hover:bg-secondary" asChild>
             <a href={song.links.spotify} target="_blank" rel="noopener noreferrer">
               <Spotify className="h-5 w-5 mr-2" /> Spotify
             </a>
           </Button>
-          <Button variant="outline" className="flex-1 hover:bg-gray-700" asChild>
+          <Button variant="outline" className="flex-1 hover:bg-secondary" asChild>
             <a href={song.links.appleMusic} target="_blank" rel="noopener noreferrer">
               <Apple className="h-5 w-5 mr-2" /> Apple Music
             </a>
           </Button>
-          <Button variant="outline" className="flex-1 hover:bg-gray-700" asChild>
+          <Button variant="outline" className="flex-1 hover:bg-secondary" asChild>
             <a href={song.links.amazonMusic} target="_blank" rel="noopener noreferrer">
               <Amazon className="h-5 w-5 mr-2" /> Amazon
             </a>

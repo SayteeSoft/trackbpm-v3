@@ -88,7 +88,7 @@ const transformTrackData = (track: any, features: any | null): Song => {
     id: track.id,
     title: track.name,
     artist: track.artists.map((a: { name: string }) => a.name).join(', '),
-    bpm: features?.tempo ? Math.round(features.tempo).toString() : 'N/A',
+    bpm: features?.tempo ? String(Math.round(features.tempo)) : 'N/A',
     key: (features?.key !== undefined && features?.mode !== undefined) ? formatKey(features.key, features.mode) : 'N/A',
     duration: formatDuration(track.duration_ms),
     imageUrl: track.album.images?.[0]?.url || 'https://placehold.co/100x100.png',
@@ -102,7 +102,16 @@ const transformTrackData = (track: any, features: any | null): Song => {
  */
 export const searchTracks = async (query: string): Promise<Song[]> => {
   const token = await getAccessToken();
-  const searchUrl = `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track&limit=9`;
+  
+  let searchUrl;
+  if (query === 'popular') {
+    const randomOffset = Math.floor(Math.random() * 500);
+    const randomChar = 'abcdefghijklmnopqrstuvwxyz'.charAt(Math.floor(Math.random() * 26));
+    searchUrl = `https://api.spotify.com/v1/search?q=${randomChar}%25&type=track&limit=9&offset=${randomOffset}`;
+  } else {
+    searchUrl = `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track&limit=9`;
+  }
+
 
   const searchResponse = await fetch(searchUrl, {
     headers: { Authorization: `Bearer ${token}` },

@@ -5,8 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Spotify, Apple, Amazon } from '@/components/icons';
 import { Separator } from '@/components/ui/separator';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 import Link from 'next/link';
 import Image from 'next/image';
 import AdBanner from '@/components/AdBanner';

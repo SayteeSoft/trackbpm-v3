@@ -15,7 +15,7 @@ export default function SongCard({ song }: { song: Song }) {
     <Card className="rounded-lg overflow-hidden shadow-sm transition-shadow hover:shadow-md bg-card border-2 border-border hover:border-primary/50">
       <Link href={`/song/${song.id}`} className="block hover:bg-muted/20">
         <CardContent className="p-4">
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4 md:gap-6">
             <div className="relative w-20 h-20 flex-shrink-0">
               <Image
                 src={song.imageUrl || 'https://placehold.co/100x100.png'}
@@ -25,11 +25,11 @@ export default function SongCard({ song }: { song: Song }) {
                 data-ai-hint="album cover"
               />
             </div>
-            <div className="flex-grow">
-              <p className="text-xs uppercase text-muted-foreground tracking-wider">{song.artist}</p>
-              <h3 className="text-2xl font-bold text-foreground">{song.title}</h3>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs uppercase text-muted-foreground tracking-wider truncate">{song.artist}</p>
+              <h3 className="text-2xl font-bold text-foreground truncate">{song.title}</h3>
             </div>
-            <div className="flex-shrink-0 flex justify-around text-center w-60">
+            <div className="hidden md:flex flex-shrink-0 justify-around text-center w-60">
                 <div className="w-1/3">
                     <p className="text-xs text-muted-foreground">KEY</p>
                     <p className="font-bold text-lg">{song.key || '-'}</p>

@@ -22,7 +22,7 @@ export default function ContactPage() {
     setResult("Sending....");
     const formData = new FormData(event.currentTarget);
 
-    const accessKey = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY;
+    const accessKey = "3ee1a7f3-b3d8-4b7d-a39a-3f40659920cb";
     if (!accessKey) {
         setResult("Access key is missing.");
         console.error("Web3Forms access key is not set in environment variables.");

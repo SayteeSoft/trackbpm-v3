@@ -20,9 +20,8 @@ export default function SongCard({ song }: { song: Song }) {
               <Image
                 src={song.imageUrl || 'https://placehold.co/100x100.png'}
                 alt={`${song.title} album art`}
-                layout="fill"
-                objectFit="cover"
-                className="rounded-md"
+                fill
+                className="rounded-md object-cover"
                 data-ai-hint="album cover"
               />
             </div>
@@ -33,7 +32,7 @@ export default function SongCard({ song }: { song: Song }) {
             <div className="flex items-center gap-6 text-center">
               <div>
                   <p className="text-xs text-muted-foreground">KEY</p>
-                  <p className="font-bold text-lg">{song.key.split(" ")[0]}</p>
+                  <p className="font-bold text-lg">{song.key}</p>
               </div>
                <div>
                   <p className="text-xs text-muted-foreground">DURATION</p>

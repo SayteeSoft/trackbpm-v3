@@ -186,12 +186,12 @@ export const getTrackDetails = async (trackId: string): Promise<Song> => {
         
         const trackData = await trackResponse.json();
 
-        if (!featuresResponse.ok) {
+        let featuresData = null;
+        if (featuresResponse.ok) {
+            featuresData = await featuresResponse.json();
+        } else {
             console.error(`Failed to get audio features for track ${trackId}. Returning details without them.`);
-            return transformTrackData(trackData, null);
         }
-        
-        const featuresData = await featuresResponse.json();
 
         return transformTrackData(trackData, featuresData);
     } catch (error) {

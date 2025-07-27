@@ -86,4 +86,72 @@ export const songs: Song[] = [
       amazonMusic: 'https://music.amazon.com/albums/B005EVN514',
     },
   },
+  {
+    id: '6',
+    title: 'A Bar Song (Tipsy)',
+    artist: 'Shaboozey',
+    bpm: '82',
+    key: 'D Major',
+    duration: '02:51',
+    imageUrl: 'https://placehold.co/100x100.png',
+    description: 'A country-trap song.',
+    longDescription:
+      'A viral country-trap song that gained popularity on social media.',
+    links: {
+      spotify: 'https://open.spotify.com/track/2eGpF4pS9EAY2r5M9p5iY8',
+      appleMusic: 'https://music.apple.com/us/album/a-bar-song-tipsy/1739268890',
+      amazonMusic: 'https://music.amazon.com/albums/B0CW151325',
+    },
+  },
+  {
+    id: '7',
+    title: 'Birds of a Feather',
+    artist: 'Billie Eilish',
+    bpm: '104',
+    key: 'C Major',
+    duration: '03:30',
+    imageUrl: 'https://placehold.co/100x100.png',
+    description: 'A song from the album Hit Me Hard and Soft.',
+    longDescription:
+      'A track from Billie Eilish\'s third studio album, exploring themes of love and connection.',
+    links: {
+      spotify: 'https://open.spotify.com/track/5TyJgM2d3c2aPpeI1nCj8s',
+      appleMusic: 'https://music.apple.com/us/album/birds-of-a-feather/1741302213',
+      amazonMusic: 'https://music.amazon.com/albums/B0D15D9VY6',
+    },
+  },
+  {
+    id: '8',
+    title: 'Good Luck, Babe!',
+    artist: 'Chappell Roan',
+    bpm: '115',
+    key: 'A Major',
+    duration: '03:38',
+    imageUrl: 'https://placehold.co/100x100.png',
+    description: 'A pop anthem about wishing an ex well.',
+    longDescription:
+      'A synth-pop track with a powerful chorus and a message of empowerment after a breakup.',
+    links: {
+      spotify: 'https://open.spotify.com/track/0Wb61H3x0a8f7N3j4A42v8',
+      appleMusic: 'https://music.apple.com/us/album/good-luck-babe/1737742137',
+      amazonMusic: 'https://music.amazon.com/albums/B0CYB4V6B3',
+    },
+  },
+  {
+    id: '9',
+    title: 'Taste',
+    artist: 'Sabrina Carpenter',
+    bpm: '118',
+    key: 'G# minor',
+    duration: '02:37',
+    imageUrl: 'https://placehold.co/100x100.png',
+    description: 'A playful and confident pop song.',
+    longDescription:
+      'Another hit from Sabrina Carpenter, "Taste" is a fun, upbeat track from her album "Short n\' Sweet".',
+    links: {
+      spotify: 'https://open.spotify.com/track/25L2faYlOdeTjK0nB4g5iM',
+      appleMusic: 'https://music.apple.com/us/album/taste/1751515082',
+      amazonMusic: 'https://music.amazon.com/albums/B0D5B4Y1B1',
+    },
+  },
 ];

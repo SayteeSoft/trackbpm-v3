@@ -3,6 +3,9 @@ export type Song = {
   title: string;
   artist: string;
   bpm: string;
+  key: string;
+  duration: string;
+  imageUrl: string;
   description: string;
   longDescription: string;
   links: {

@@ -11,21 +11,6 @@ import { Song } from '@/lib/types';
 import { Search, Loader2 } from 'lucide-react';
 import { searchSpotifyTracks } from '@/lib/actions';
 
-const HOURLY_SEARCH_TERMS = [
-  "Taylor Swift", "The Beatles", "Queen", "Michael Jackson", "Nirvana",
-  "Eagles", "David Bowie", "Led Zeppelin", "Pink Floyd", "Bob Dylan",
-  "The Rolling Stones", "Elton John", "Stevie Wonder", "Jimi Hendrix",
-  "Aretha Franklin", "Marvin Gaye", "James Brown", "Elvis Presley",
-  "Bob Marley", "U2", "Radiohead", "Coldplay", "Beyoncé", "Kendrick Lamar",
-  "Daft Punk", "Fleetwood Mac", "The Who", "Joni Mitchell", "Prince",
-  "Frank Sinatra", "Johnny Cash", "ABBA", "The Beach Boys", "Madonna",
-  "Adele", "Drake", "Rihanna", "Kanye West", "Eminem", "AC/DC",
-  "Metallica", "Guns N' Roses", "Red Hot Chili Peppers", "Foo Fighters",
-  "Green Day", "The Killers", "Arctic Monkeys", "The Strokes", "Lady Gaga",
-  "Bruno Mars", "Ed Sheeran", "Justin Timberlake", "Pharrell Williams",
-  "OutKast", "The Notorious B.I.G.", "Tupac Shakur", "Jay-Z", "Nas"
-];
-
 function ExampleSong() {
   return (
      <div className="text-center text-sm text-muted-foreground mt-4">
@@ -129,9 +114,12 @@ export default function Header() {
     if (debouncedSearchTerm) {
       handleSearch(debouncedSearchTerm);
     } else if (isClient && initialLoad) {
+        // Generate a random search query to get a variety of songs on each load.
         const getRandomSearchTerm = () => {
-            const randomIndex = Math.floor(Math.random() * HOURLY_SEARCH_TERMS.length);
-            return HOURLY_SEARCH_TERMS[randomIndex];
+          const characters = 'abcdefghijklmnopqrstuvwxyz';
+          const randomChar = characters.charAt(Math.floor(Math.random() * characters.length));
+          // Adding a wildcard and random offset makes results more varied.
+          return `${randomChar}`;
         };
         handleSearch(getRandomSearchTerm());
     }

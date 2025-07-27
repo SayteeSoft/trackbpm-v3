@@ -102,9 +102,7 @@ const transformTrackData = (track: any, features: any | null): Song => {
  */
 export const searchTracks = async (query: string): Promise<Song[]> => {
   const token = await getAccessToken();
-  // Use a random offset to get different results for the same query character
-  const randomOffset = Math.floor(Math.random() * 500);
-  const searchUrl = `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track&limit=9&offset=${randomOffset}`;
+  const searchUrl = `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track&limit=9`;
 
   const searchResponse = await fetch(searchUrl, {
     headers: { Authorization: `Bearer ${token}` },

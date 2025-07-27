@@ -19,8 +19,8 @@ function ExampleSong() {
   );
 }
 
-function SearchResults({ songs, isLoading, searchTerm, initialLoad }: { songs: Song[], isLoading: boolean, searchTerm: string, initialLoad: boolean }) {
-  if (isLoading && initialLoad) {
+function SearchResults({ songs, isLoading, searchTerm }: { songs: Song[], isLoading: boolean, searchTerm: string }) {
+  if (isLoading) {
      return (
        <div className="flex justify-center py-12">
           <Loader2 className="h-8 w-8 text-muted-foreground animate-spin" />
@@ -28,7 +28,7 @@ function SearchResults({ songs, isLoading, searchTerm, initialLoad }: { songs: S
     );
   }
 
-  if (songs.length === 0 && searchTerm && !isLoading) {
+  if (songs.length === 0 && searchTerm) {
     return (
         <div className="text-center text-sm text-muted-foreground py-12">
           <p>No results found for "{searchTerm}".</p>
@@ -36,7 +36,7 @@ function SearchResults({ songs, isLoading, searchTerm, initialLoad }: { songs: S
     );
   }
   
-  if (songs.length === 0 && !isLoading) {
+  if (songs.length === 0) {
     return null;
   }
   
@@ -59,14 +59,8 @@ export default function SongSearch() {
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const [songs, setSongs] = useState<Song[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isClient, setIsClient] = useState(false);
-  const [initialLoad, setInitialLoad] = useState(true);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
 
   const handleSearch = useCallback(async (term: string) => {
     if (!term) {
@@ -86,8 +80,7 @@ export default function SongSearch() {
       setSongs(result.songs || []);
     }
     setIsLoading(false);
-    if (initialLoad) setInitialLoad(false);
-  }, [initialLoad]);
+  }, []);
   
   useEffect(() => {
     const debounceTimeout = setTimeout(() => {
@@ -101,21 +94,12 @@ export default function SongSearch() {
 
   useEffect(() => {
     if (debouncedSearchTerm) {
-        handleSearch(debouncedSearchTerm);
+      handleSearch(debouncedSearchTerm);
+    } else {
+      // On initial load, debouncedSearchTerm is empty, so we explicitly call search
+      handleSearch('popular'); 
     }
   }, [debouncedSearchTerm, handleSearch]);
-
-  useEffect(() => {
-    if(isClient) {
-      const getRandomSearchTerm = () => {
-        const characters = 'abcdefghijklmnopqrstuvwxyz';
-        const randomChar = characters.charAt(Math.floor(Math.random() * characters.length));
-        return `${randomChar}`;
-      };
-      handleSearch(getRandomSearchTerm());
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isClient]);
 
   return (
     <>
@@ -127,14 +111,14 @@ export default function SongSearch() {
           onChange={(e) => setSearchTerm(e.target.value)}
           className="w-full pl-4 pr-12 py-7 rounded-md shadow-lg bg-card border-2 border-border text-lg"
         />
-        {isLoading && !initialLoad ? (
+        {isLoading ? (
           <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground animate-spin" />
         ) : (
           <Search className="absolute right-4 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground" />
         )}
       </div>
       <ExampleSong />
-      {isClient && <SearchResults songs={songs} isLoading={isLoading} searchTerm={debouncedSearchTerm || ' '} initialLoad={initialLoad} />}
+      <SearchResults songs={songs} isLoading={isLoading} searchTerm={debouncedSearchTerm} />
     </>
   );
 }

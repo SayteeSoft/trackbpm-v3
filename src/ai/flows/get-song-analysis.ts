@@ -21,7 +21,7 @@ const SongAnalysisInputSchema = z.object({
 export type SongAnalysisInput = z.infer<typeof SongAnalysisInputSchema>;
 
 const SongAnalysisOutputSchema = z.object({
-    analysis: z.string().describe('A detailed paragraph analyzing the song\'s musical characteristics. It should mention the tempo, key, mode (major/minor), energy, danceability, and time signature.'),
+    analysis: z.string().describe('A detailed paragraph analyzing the song\'s musical characteristics. It should mention the tempo, key, mode (major/minor), energy, danceability, and time signature. All numerical values and their associated metrics should be bolded using Markdown.'),
 });
 export type SongAnalysisOutput = z.infer<typeof SongAnalysisOutputSchema>;
 
@@ -46,10 +46,13 @@ The paragraph must include:
 - A comment on its energy level and danceability.
 - The time signature (assume 4/4 beats per bar unless you know otherwise for this specific song).
 
-Do not use markdown. Write a single paragraph.
+**Crucially, you must bold any number and its associated metric using Markdown's double-asterisk syntax.**
+For example: "**134 BPM**", "**67 BPM**", "**268 BPM**", "**5 minutes and 18 seconds**", "**C key**", "**4 beats per bar**".
+
+Do not use markdown for anything else. Write a single paragraph.
 
 Example:
-"Space Oddity - 2015 Remaster is a song by David Bowie with a tempo of 134 BPM. It can also be used half-time at 67 BPM or double-time at 268 BPM. The track runs 5 minutes and 18 seconds long with a C key and a major mode. It has average energy and is not very danceable with a time signature of 4 beats per bar."
+"Space Oddity - 2015 Remaster is a song by David Bowie with a tempo of **134 BPM**. It can also be used half-time at **67 BPM** or double-time at **268 BPM**. The track runs **5 minutes and 18 seconds** long with a **C key** and a major mode. It has average energy and is not very danceable with a time signature of **4 beats per bar**."
 
 Song Details:
 - Title: {{{title}}}

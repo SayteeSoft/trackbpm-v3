@@ -56,6 +56,12 @@ export default async function SongPage({ params }: { params: { id: string } }) {
   const amazonSearchUrl = `https://music.amazon.com/search/${encodeURIComponent(song.title + ' ' + song.artist)}`;
   const appleSearchUrl = `https://music.apple.com/us/search?term=${encodeURIComponent(song.title + ' ' + song.artist)}`;
 
+  // Simple Markdown to HTML converter for bolding
+  const renderAnalysis = (text: string) => {
+    const html = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    return { __html: html };
+  };
+
   return (
     <div className="bg-background">
       <main className="container mx-auto px-4 py-8">
@@ -110,9 +116,10 @@ export default async function SongPage({ params }: { params: { id: string } }) {
                     
                     {analysisResult.analysis && (
                     <div className="space-y-4">
-                        <p className="text-base text-muted-foreground leading-relaxed">
-                        {analysisResult.analysis}
-                        </p>
+                        <p 
+                            className="text-base text-muted-foreground leading-relaxed"
+                            dangerouslySetInnerHTML={renderAnalysis(analysisResult.analysis)}
+                        />
                         <Separator className="my-6" />
                         <a href={`https://www.google.com/search?q=${encodeURIComponent(song.title + ' ' + song.artist + ' BPM')}`} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline text-sm">
                             Find BPM on another source

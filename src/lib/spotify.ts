@@ -52,7 +52,7 @@ const transformTrackData = (track, features): Song => {
 
 export const searchTracks = async (query: string): Promise<Song[]> => {
     const { access_token } = await getAccessToken();
-    const response = await fetch(`${API_BASE}/search?q=${encodeURIComponent(query)}&type=track&limit=10`, {
+    const response = await fetch(`${API_BASE}/search?q=${encodeURIComponent(query)}&type=track&limit=9`, {
         headers: {
         Authorization: `Bearer ${access_token}`,
         },

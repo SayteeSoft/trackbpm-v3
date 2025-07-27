@@ -101,7 +101,11 @@ export default function Header() {
   const [songs, setSongs] = useState<Song[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [initialLoad, setInitialLoad] = useState(true);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const handleSearch = useCallback(async (term: string) => {
     if (!term) {
@@ -131,7 +135,7 @@ export default function Header() {
   }, [searchTerm]);
 
   useEffect(() => {
-    if (!isHomePage) {
+    if (!isHomePage || !isClient) {
       setSongs([]);
       setIsLoading(false);
       return;
@@ -139,18 +143,14 @@ export default function Header() {
 
     if (debouncedSearchTerm) {
       handleSearch(debouncedSearchTerm);
-    } else if (initialLoad) {
+    } else {
         const getRandomSearchTerm = () => {
             const randomIndex = Math.floor(Math.random() * HOURLY_SEARCH_TERMS.length);
             return HOURLY_SEARCH_TERMS[randomIndex];
         };
         handleSearch(getRandomSearchTerm());
-        setInitialLoad(false);
-    } else {
-      setSongs([]);
-      setIsLoading(false);
     }
-  }, [debouncedSearchTerm, isHomePage, handleSearch, initialLoad]);
+  }, [debouncedSearchTerm, isHomePage, isClient, handleSearch]);
 
 
   return (

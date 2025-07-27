@@ -54,6 +54,7 @@ export default function ContactPage() {
             toast({
                 title: "Message Sent!",
                 description: "Thanks for reaching out. We'll get back to you soon.",
+                variant: 'success',
             })
             setName('');
             setEmail('');

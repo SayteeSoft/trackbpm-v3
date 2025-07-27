@@ -22,11 +22,11 @@ export default function Footer() {
       <div className="w-full bg-[#111111]">
         <div className="container mx-auto px-4 py-4 text-center text-sm text-muted-foreground">
             <div className="flex justify-center items-center flex-wrap gap-x-2 gap-y-1">
+                <span>&copy;2025 TRACK⚡BPM</span>
+                <span className="hidden sm:inline">|</span>
                 <span>
                     Site By <a href="https://web-developer.one/" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">Saytee Software</a>
                 </span>
-                <span className="hidden sm:inline">|</span>
-                <span>&copy;2025 TRACK⚡BPM</span>
                 <span className="hidden sm:inline">|</span>
                 <Link href="#" className="underline hover:text-primary">Privacy Policy</Link>
                 <span className="hidden sm:inline">|</span>

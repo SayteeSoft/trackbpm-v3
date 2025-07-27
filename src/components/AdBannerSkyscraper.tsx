@@ -1,12 +1,17 @@
-import { Card } from '@/components/ui/card';
+import Image from 'next/image';
+import Link from 'next/link';
 
 export default function AdBannerSkyscraper() {
   return (
-    <Card className="sticky top-8 flex items-center justify-center w-[160px] h-[600px] rounded-md bg-muted/50 border border-border">
-      <div className="text-center text-muted-foreground">
-        <p className="text-xs">Advertisement</p>
-        <p className="text-2xl font-bold text-foreground/50">160 x 600</p>
-      </div>
-    </Card>
+    <Link href="https://www.paypal.com/ncp/payment/AKJNWAU8PSSNE" target="_blank" rel="noopener noreferrer" className="sticky top-8">
+      <Image
+        src="https://placehold.co/160x600.png"
+        alt="Skyscraper advertisement banner"
+        width={160}
+        height={600}
+        className="rounded-md"
+        data-ai-hint="advertisement banner"
+      />
+    </Link>
   );
 }

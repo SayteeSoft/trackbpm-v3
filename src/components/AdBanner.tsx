@@ -1,12 +1,17 @@
-import { Card } from '@/components/ui/card';
+import Image from 'next/image';
+import Link from 'next/link';
 
 export default function AdBanner() {
   return (
-    <Card className="flex items-center justify-center h-28 rounded-md bg-muted/50 border border-border">
-      <div className="text-center text-muted-foreground">
-        <p className="text-xs">Advertisement</p>
-        <p className="text-2xl font-bold text-foreground/50">728 x 90</p>
-      </div>
-    </Card>
+    <Link href="https://www.paypal.com/ncp/payment/AKJNWAU8PSSNE" target="_blank" rel="noopener noreferrer">
+      <Image
+        src="https://placehold.co/728x90.png"
+        alt="Advertisement banner"
+        width={728}
+        height={90}
+        className="rounded-md"
+        data-ai-hint="advertisement banner"
+      />
+    </Link>
   );
 }

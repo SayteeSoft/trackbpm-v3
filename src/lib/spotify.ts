@@ -88,8 +88,8 @@ const transformTrackData = (track: any, features: any | null): Song => {
     id: track.id,
     title: track.name,
     artist: track.artists.map((a: { name: string }) => a.name).join(', '),
-    bpm: features?.tempo ? String(Math.round(features.tempo)) : 'N/A',
-    key: (features?.key !== undefined && features?.mode !== undefined) ? formatKey(features.key, features.mode) : 'N/A',
+    bpm: features?.tempo ? String(Math.round(features.tempo)) : '',
+    key: (features?.key !== undefined && features?.mode !== undefined) ? formatKey(features.key, features.mode) : '',
     duration: formatDuration(track.duration_ms),
     imageUrl: track.album.images?.[0]?.url || 'https://placehold.co/100x100.png',
   };
@@ -105,7 +105,8 @@ export const searchTracks = async (query: string): Promise<Song[]> => {
   
   let searchUrl;
   if (query === 'popular') {
-    searchUrl = `https://api.spotify.com/v1/search?q=popular&type=track&limit=9`;
+    // A more reliable way to get popular tracks
+    searchUrl = `https://api.spotify.com/v1/search?q=year%3A${new Date().getFullYear()}&type=track&limit=9`;
   } else {
     searchUrl = `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track&limit=9`;
   }
@@ -124,8 +125,8 @@ export const searchTracks = async (query: string): Promise<Song[]> => {
   const featuresResponse = await fetch(`https://api.spotify.com/v1/audio-features?ids=${trackIds}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
+
   if (!featuresResponse.ok) {
-    // If features fail, we can still return track data without bpm/key
     console.error('Failed to get audio features');
     return tracks.map((track: any) => transformTrackData(track, null));
   }
@@ -161,7 +162,6 @@ export const getTrackDetails = async (trackId: string): Promise<Song> => {
   
   const trackData = await trackResponse.json();
   
-  // Features can sometimes be null for certain tracks, so we handle that gracefully
   if (!featuresResponse.ok) {
     console.warn(`Could not get audio features for track ${trackId}`);
     return transformTrackData(trackData, null);

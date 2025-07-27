@@ -32,15 +32,15 @@ export default function SongCard({ song }: { song: Song }) {
             <div className="flex items-center gap-6 text-center">
               <div className="w-20">
                   <p className="text-xs text-muted-foreground">KEY</p>
-                  <p className="font-bold text-lg">{song.key}</p>
+                  <p className="font-bold text-lg">{song.key || '-'}</p>
               </div>
                <div className="w-20">
                   <p className="text-xs text-muted-foreground">DURATION</p>
-                  <p className="font-bold text-lg">{song.duration}</p>
+                  <p className="font-bold text-lg">{song.duration || '-'}</p>
               </div>
                <div className="w-20">
                   <p className="text-xs text-muted-foreground">BPM</p>
-                  <p className="font-bold text-lg">{song.bpm}</p>
+                  <p className="font-bold text-lg">{song.bpm || '-'}</p>
               </div>
             </div>
           </div>

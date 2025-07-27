@@ -13,7 +13,28 @@ import { searchSpotifyTracks } from '@/lib/actions';
 
 const DEFAULT_SEARCH_TERM = "Taylor Swift";
 
+const exampleSongs = [
+  { text: "The Beatles - All You Need Is Love", bpm: 103 },
+  { text: "Queen - Bohemian Rhapsody", bpm: 72 },
+  { text: "Michael Jackson - Billie Jean", bpm: 117 },
+  { text: "Nirvana - Smells Like Teen Spirit", bpm: 117 },
+  { text: "Eagles - Hotel California", bpm: 75 },
+  { text: "David Bowie - Space Oddity", bpm: 81 },
+];
+
 function SearchResults({ songs, isLoading, searchTerm }: { songs: Song[], isLoading: boolean, searchTerm: string }) {
+  const [currentExample, setCurrentExample] = useState(exampleSongs[0]);
+
+  useEffect(() => {
+    const getHourlyExample = () => {
+      const hour = new Date().getHours();
+      const index = hour % exampleSongs.length;
+      setCurrentExample(exampleSongs[index]);
+    };
+    getHourlyExample();
+    const intervalId = setInterval(getHourlyExample, 60 * 60 * 1000);
+    return () => clearInterval(intervalId);
+  }, []);
 
   if (isLoading && songs.length === 0) {
     return (
@@ -34,7 +55,7 @@ function SearchResults({ songs, isLoading, searchTerm }: { songs: Song[], isLoad
   if (songs.length === 0 && !isLoading) {
       return (
           <p className="text-center text-sm text-muted-foreground py-12">
-              e.g., <span className="font-semibold text-foreground">Sabrina Carpenter - Espresso</span>
+              For example: <span className="font-semibold text-foreground">{currentExample.text}</span> (which is {currentExample.bpm} BPM, by the way)
           </p>
       )
   }
@@ -65,9 +86,9 @@ export default function Header() {
   const pathname = usePathname();
   const isHomePage = pathname === '/';
 
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState(isHomePage ? DEFAULT_SEARCH_TERM : '');
   const [songs, setSongs] = useState<Song[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(isHomePage);
   const [error, setError] = useState<string | null>(null);
 
   const handleSearch = useCallback(async (term: string) => {
@@ -89,36 +110,32 @@ export default function Header() {
     }
     setIsLoading(false);
   }, [isHomePage]);
-
+  
   useEffect(() => {
-    if (isHomePage) {
-      // On initial mount of the homepage, perform the default search
+    if (!isHomePage) {
+      setSongs([]);
+      setSearchTerm('');
+      setIsLoading(false);
+      return;
+    };
+    
+    // Initial search on homepage load
+    if (searchTerm === DEFAULT_SEARCH_TERM) {
       handleSearch(DEFAULT_SEARCH_TERM);
     }
-    // We only want this to run once on mount for the default search
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isHomePage]);
 
-  useEffect(() => {
-    // This effect handles user-driven searches with a debounce
-    if (!isHomePage) return;
-
-    // Don't run this on the initial render with the default search term
-    if (searchTerm === '' || searchTerm === DEFAULT_SEARCH_TERM) return;
-    
     const debounceTimeout = setTimeout(() => {
-      handleSearch(searchTerm);
+        // don't search for default term on debounce, only on initial
+      if (searchTerm && searchTerm !== DEFAULT_SEARCH_TERM) {
+        handleSearch(searchTerm);
+      } else if (!searchTerm) {
+        setSongs([]);
+        setIsLoading(false);
+      }
     }, 500);
 
     return () => clearTimeout(debounceTimeout);
-  }, [searchTerm, handleSearch, isHomePage]);
-
-  useEffect(() => {
-      if(!isHomePage){
-          setSongs([]);
-          setSearchTerm('');
-      }
-  },[isHomePage])
+  }, [searchTerm, isHomePage, handleSearch]);
 
 
   return (
@@ -138,7 +155,7 @@ export default function Header() {
             <Input
             type="text"
             placeholder="Search by song title or artist name..."
-            value={searchTerm}
+            value={searchTerm === DEFAULT_SEARCH_TERM ? '' : searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-4 pr-12 py-7 rounded-md shadow-lg bg-card border-2 border-border text-lg"
             />

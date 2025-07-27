@@ -4,6 +4,7 @@ import './globals.css';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Chatbot from '@/components/Chatbot';
+import { Toaster } from "@/components/ui/toaster"
 
 export const metadata: Metadata = {
   title: 'TRACK ⚡ BPM',
@@ -30,6 +31,7 @@ export default function RootLayout({
           <main className="flex-1">{children}</main>
           <Footer />
           <Chatbot />
+          <Toaster />
         </div>
       </body>
     </html>

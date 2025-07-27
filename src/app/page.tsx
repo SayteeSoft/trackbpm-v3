@@ -77,9 +77,7 @@ export default function Home() {
             <div className="space-y-4 max-w-[calc(42rem+90px)] mx-auto">
               {displayedSongs.map((song, index) => (
                 <React.Fragment key={song.id}>
-                   <Link href={`/song/${song.id}`} className="block hover:bg-muted/20">
-                    <SongCard song={song} />
-                  </Link>
+                  <SongCard song={song} />
                   {(index + 1) % 3 === 0 && (index + 1) < displayedSongs.length && <AdBanner />}
                 </React.Fragment>
               ))}

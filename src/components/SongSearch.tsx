@@ -9,6 +9,7 @@ import { Search, Loader2 } from 'lucide-react';
 import { searchSpotifyTracks } from '@/lib/actions';
 import Link from 'next/link';
 import Image from 'next/image';
+import AdBanner from './AdBanner';
 
 function ExampleSong() {
   return (
@@ -63,6 +64,9 @@ function SearchResults({ songs, isLoading, searchTerm }: { songs: Song[], isLoad
             )}
           </React.Fragment>
         ))}
+        <div className="my-8">
+          <AdBanner />
+        </div>
       </div>
     </div>
   );

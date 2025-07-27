@@ -194,9 +194,10 @@ export default function Header() {
             )}
           </div>
           <ExampleSong />
-          {isClient && <SearchResults songs={songs} isLoading={isLoading} searchTerm={debouncedSearchTerm} />}
+          {isClient && <SearchResults songs={songs} isLoading={isLoading} searchTerm={debouncedSearchTerm || 'random'} />}
         </>
       )}
     </>
   );
 }
+

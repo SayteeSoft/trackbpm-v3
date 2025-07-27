@@ -59,10 +59,10 @@ export default async function SongPage({ params }: { params: { id: string } }) {
   return (
     <div className="bg-background">
       <main className="container mx-auto px-4 py-8">
-        <div className="flex flex-col md:flex-row gap-8">
+        <div className="flex flex-col md:flex-row gap-8 justify-center">
           
           {/* Main Content */}
-          <div className="w-full md:flex-1">
+          <div className="w-full max-w-[calc(42rem+90px)]">
             <div className="flex flex-col sm:flex-row gap-8 items-start mb-8">
               <div className="flex-shrink-0">
                 <Image 
@@ -126,7 +126,7 @@ export default async function SongPage({ params }: { params: { id: string } }) {
           </div>
 
           {/* Right Sidebar Ad */}
-          <div className="w-full md:w-[160px] flex-shrink-0">
+          <div className="w-full md:w-[160px] flex-shrink-0 hidden md:block">
             <AdBannerSkyscraper />
           </div>
         </div>

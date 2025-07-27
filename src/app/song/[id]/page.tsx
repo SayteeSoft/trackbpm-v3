@@ -80,7 +80,7 @@ export default async function SongPage({ params }: { params: { id: string } }) {
                         />
                     </div>
                     <div className="flex-1 mt-4 sm:mt-0 text-center sm:text-left">
-                        <p className="text-lg font-medium text-foreground">{song.artist}</p>
+                        <p className="text-lg font-medium text-foreground mb-2">{song.artist}</p>
                         <h1 className="text-5xl sm:text-7xl font-bold tracking-tighter text-foreground">{song.title}</h1>
                         {song.bpm && (
                         <Badge variant="destructive" className="mt-4">

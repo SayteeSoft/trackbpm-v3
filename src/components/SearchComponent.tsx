@@ -10,21 +10,18 @@ import { Search, Loader2 } from 'lucide-react';
 import { searchSpotifyTracks } from '@/lib/actions';
 import { usePathname } from 'next/navigation';
 
-function SearchComponent() {
+export default function SearchComponent() {
   const [searchTerm, setSearchTerm] = useState('');
   const [songs, setSongs] = useState<Song[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const pathname = usePathname();
 
-  // Clear search when navigating to a new page
-  useEffect(() => {
-    setSearchTerm('');
-    setSongs([]);
-    setError(null);
-  }, [pathname]);
+  const isHomePage = pathname === '/';
 
   const handleSearch = useCallback(async (term: string) => {
+    if (!isHomePage) return; // Only search on the homepage
+
     if (term.length < 3) {
       setSongs([]);
       setError(null);
@@ -41,27 +38,30 @@ function SearchComponent() {
       setSongs(result.songs || []);
     }
     setIsLoading(false);
-  }, []);
+  }, [isHomePage]);
 
   useEffect(() => {
+    if (!isHomePage) return;
+    
     const debounceTimeout = setTimeout(() => {
       handleSearch(searchTerm);
     }, 500);
 
     return () => clearTimeout(debounceTimeout);
-  }, [searchTerm, handleSearch]);
+  }, [searchTerm, handleSearch, isHomePage]);
 
-  const showResults = searchTerm.length > 2;
+  const showResults = isHomePage && searchTerm.length > 2;
 
   return (
     <>
-      <div className="w-full max-w-[calc(42rem+90px)] mx-auto mb-2 relative -mt-[29px]">
+      <div className="w-full max-w-[calc(42rem+90px)] mx-auto mb-2 relative" style={{marginTop: isHomePage ? '-59px' : '-29px'}}>
         <Input
           type="text"
           placeholder="Search by song title or artist name..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="w-full pl-4 pr-12 py-7 rounded-md shadow-lg bg-card border-2 border-border text-lg"
+          disabled={!isHomePage}
         />
         {isLoading ? (
           <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground animate-spin" />
@@ -91,20 +91,11 @@ function SearchComponent() {
         </div>
       )}
 
-      {/* Show example text only on the home page when the search is empty */}
-      {pathname === '/' && searchTerm.length === 0 && !isLoading && (
+      {isHomePage && searchTerm.length === 0 && !isLoading && (
          <p className="text-center text-sm text-muted-foreground mb-12">
             e.g., <span className="font-semibold text-foreground">Sabrina Carpenter - Espresso</span>
           </p>
       )}
     </>
   );
-}
-
-export default function Home() {
-    return (
-        <main className="flex-1 w-full">
-            {/* The SearchComponent now lives on the page and will render its own results */}
-        </main>
-    );
 }

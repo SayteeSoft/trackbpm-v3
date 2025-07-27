@@ -99,8 +99,9 @@ export default function Header() {
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const [songs, setSongs] = useState<Song[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [initialLoad, setInitialLoad] = useState(true);
 
   const handleSearch = useCallback(async (term: string) => {
     if (!term) {
@@ -135,18 +136,21 @@ export default function Header() {
       setIsLoading(false);
       return;
     }
-    
+
     if (debouncedSearchTerm) {
       handleSearch(debouncedSearchTerm);
+    } else if (initialLoad) {
+        const getRandomSearchTerm = () => {
+            const randomIndex = Math.floor(Math.random() * HOURLY_SEARCH_TERMS.length);
+            return HOURLY_SEARCH_TERMS[randomIndex];
+        };
+        handleSearch(getRandomSearchTerm());
+        setInitialLoad(false);
     } else {
-      // This logic now correctly runs only on the client side, ensuring variety.
-      const getRandomSearchTerm = () => {
-          const randomIndex = Math.floor(Math.random() * HOURLY_SEARCH_TERMS.length);
-          return HOURLY_SEARCH_TERMS[randomIndex];
-      };
-      handleSearch(getRandomSearchTerm());
+      setSongs([]);
+      setIsLoading(false);
     }
-  }, [debouncedSearchTerm, isHomePage, handleSearch]);
+  }, [debouncedSearchTerm, isHomePage, handleSearch, initialLoad]);
 
 
   return (

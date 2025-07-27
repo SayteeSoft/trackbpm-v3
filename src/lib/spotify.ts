@@ -2,6 +2,7 @@
 'use server';
 
 import type { Song } from './types';
+import { getSongDetails } from '@/ai/flows/get-song-details';
 
 const client_id = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID;
 const client_secret = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_SECRET;
@@ -61,42 +62,26 @@ const formatDuration = (ms: number): string => {
   return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 };
 
-const keyMap = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
-const modeMap = ['Minor', 'Major'];
-
 /**
- * Formats the key and mode into a string (e.g., "C Major").
- * @param {number} key - The key index (0-11).
- * @param {number} mode - The mode (0 for minor, 1 for major).
- * @returns {string} The formatted key string.
- */
-const formatKey = (key: number, mode: number): string => {
-  if (key >= 0 && key < keyMap.length && (mode === 0 || mode === 1)) {
-    return `${keyMap[key]} ${modeMap[mode]}`;
-  }
-  return 'N/A';
-};
-
-/**
- * Transforms raw Spotify track and audio features data into the Song type.
+ * Transforms raw Spotify track data and AI features into the Song type.
  * @param {any} track - The raw track object from Spotify.
- * @param {any | null} features - The raw audio features object.
+ * @param {{key: string, bpm: string} | null} features - The AI-generated features.
  * @returns {Song} The transformed Song object.
  */
-const transformTrackData = (track: any, features: any | null): Song => {
+const transformTrackData = (track: any, features: {key: string, bpm: string} | null): Song => {
   return {
     id: track.id,
     title: track.name,
     artist: track.artists.map((a: { name: string }) => a.name).join(', '),
-    bpm: features?.tempo ? String(Math.round(features.tempo)) : '',
-    key: (features?.key !== undefined && features?.mode !== undefined) ? formatKey(features.key, features.mode) : '',
+    bpm: features?.bpm || '',
+    key: features?.key || '',
     duration: formatDuration(track.duration_ms),
     imageUrl: track.album.images?.[0]?.url || 'https://placehold.co/100x100.png',
   };
 };
 
 /**
- * Searches for tracks on Spotify and gets their audio features.
+ * Searches for tracks on Spotify and gets their audio features from AI.
  * @param {string} query - The search query.
  * @returns {Promise<Song[]>} A promise that resolves to an array of Song objects.
  */
@@ -105,7 +90,6 @@ export const searchTracks = async (query: string): Promise<Song[]> => {
   
   let searchUrl;
   if (query === 'popular') {
-    // A more reliable way to get popular tracks
     searchUrl = `https://api.spotify.com/v1/search?q=year%3A${new Date().getFullYear()}&type=track&limit=9`;
   } else {
     searchUrl = `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track&limit=9`;
@@ -121,39 +105,35 @@ export const searchTracks = async (query: string): Promise<Song[]> => {
 
   if (!tracks || tracks.length === 0) return [];
 
-  const trackIds = tracks.map((t: { id: string }) => t.id).join(',');
-  const featuresResponse = await fetch(`https://api.spotify.com/v1/audio-features?ids=${trackIds}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  if (!featuresResponse.ok) {
-    console.error('Failed to get audio features');
-    return tracks.map((track: any) => transformTrackData(track, null));
-  }
+  // Get AI features for all tracks in parallel
+  const featuresPromises = tracks.map((track: any) => 
+    getSongDetails({
+      title: track.name,
+      artist: track.artists.map((a: { name: string }) => a.name).join(', '),
+    }).catch(e => {
+        console.error(`Failed to get AI details for ${track.name}`, e);
+        return null; // Return null if AI call fails
+    })
+  );
   
-  const featuresData = await featuresResponse.json();
-  const featuresMap = new Map(featuresData.audio_features.filter(Boolean).map((f: any) => [f.id, f]));
+  const featuresResults = await Promise.all(featuresPromises);
 
-  return tracks.map((track: any) => {
-    const features = featuresMap.get(track.id);
+  return tracks.map((track: any, index: number) => {
+    const features = featuresResults[index];
     return transformTrackData(track, features);
   }).filter((song: Song | null): song is Song => song !== null);
 };
 
 /**
- * Retrieves detailed information for a single Spotify track and its audio features.
+ * Retrieves detailed information for a single Spotify track and its AI audio features.
  * @param {string} trackId - The Spotify ID of the track.
  * @returns {Promise<Song>} A promise that resolves to a single Song object.
  */
 export const getTrackDetails = async (trackId: string): Promise<Song> => {
   const token = await getAccessToken();
   const trackUrl = `https://api.spotify.com/v1/tracks/${trackId}`;
-  const featuresUrl = `https://api.spotify.com/v1/audio-features/${trackId}`;
-
-  const [trackResponse, featuresResponse] = await Promise.all([
-    fetch(trackUrl, { headers: { Authorization: `Bearer ${token}` } }),
-    fetch(featuresUrl, { headers: { Authorization: `Bearer ${token}` } }),
-  ]);
+  
+  const trackResponse = await fetch(trackUrl, { headers: { Authorization: `Bearer ${token}` } });
 
   if (!trackResponse.ok) {
     const errorText = await trackResponse.text();
@@ -162,12 +142,15 @@ export const getTrackDetails = async (trackId: string): Promise<Song> => {
   
   const trackData = await trackResponse.json();
   
-  if (!featuresResponse.ok) {
-    console.warn(`Could not get audio features for track ${trackId}`);
-    return transformTrackData(trackData, null);
+  let features = null;
+  try {
+    features = await getSongDetails({
+        title: trackData.name,
+        artist: trackData.artists.map((a: { name: string }) => a.name).join(', '),
+    });
+  } catch (e) {
+    console.warn(`Could not get AI audio features for track ${trackId}`, e);
   }
 
-  const featuresData = await featuresResponse.json();
-
-  return transformTrackData(trackData, featuresData);
+  return transformTrackData(trackData, features);
 };

@@ -22,7 +22,7 @@ const exampleSongs = [
   { text: "David Bowie - Space Oddity", bpm: 81 },
 ];
 
-function SearchResults({ songs, isLoading, searchTerm }: { songs: Song[], isLoading: boolean, searchTerm: string }) {
+function ExampleSong() {
   const [currentExample, setCurrentExample] = useState(exampleSongs[0]);
 
   useEffect(() => {
@@ -36,6 +36,17 @@ function SearchResults({ songs, isLoading, searchTerm }: { songs: Song[], isLoad
     return () => clearInterval(intervalId);
   }, []);
 
+  return (
+     <div className="text-center text-sm text-muted-foreground mt-4">
+        <p>
+            For example: <span className="font-semibold text-foreground">{currentExample.text}</span> (which is {currentExample.bpm} BPM, by the way)
+        </p>
+    </div>
+  );
+}
+
+
+function SearchResults({ songs, isLoading, searchTerm }: { songs: Song[], isLoading: boolean, searchTerm: string }) {
   if (isLoading) {
     return (
        <div className="flex justify-center py-12">
@@ -48,10 +59,7 @@ function SearchResults({ songs, isLoading, searchTerm }: { songs: Song[], isLoad
     return (
         <div className="text-center text-sm text-muted-foreground py-12">
           <p>No results found for "{searchTerm}".</p>
-          <p className="mt-2">
-              For example: <span className="font-semibold text-foreground">{currentExample.text}</span> (which is {currentExample.bpm} BPM, by the way)
-          </p>
-      </div>
+        </div>
     );
   }
   
@@ -130,23 +138,25 @@ export default function Header() {
       </header>
       
       {isHomePage && (
-         <div className="w-full max-w-[calc(42rem+90px)] mx-auto mb-2 relative -mt-[29px]">
+        <>
+          <div className="w-full max-w-[calc(42rem+90px)] mx-auto mb-2 relative -mt-[29px]">
             <Input
-            type="text"
-            placeholder="Search by song title or artist name..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-4 pr-12 py-7 rounded-md shadow-lg bg-card border-2 border-border text-lg"
+              type="text"
+              placeholder="Search by song title or artist name..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-4 pr-12 py-7 rounded-md shadow-lg bg-card border-2 border-border text-lg"
             />
             {isLoading ? (
-            <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground animate-spin" />
+              <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground animate-spin" />
             ) : (
-            <Search className="absolute right-4 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground" />
+              <Search className="absolute right-4 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground" />
             )}
-        </div>
+          </div>
+          <ExampleSong />
+          <SearchResults songs={songs} isLoading={isLoading} searchTerm={debouncedSearchTerm} />
+        </>
       )}
-
-      {isHomePage && <SearchResults songs={songs} isLoading={isLoading} searchTerm={debouncedSearchTerm} />}
     </>
   );
 }

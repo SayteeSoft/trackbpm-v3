@@ -21,10 +21,15 @@ export default function ContactPage() {
     event.preventDefault();
     setResult("Sending....");
     
-    const accessKey = "3ee1a7f3-b3d8-4b7d-a39a-3f40659920cb";
+    const accessKey = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY;
     if (!accessKey) {
         setResult("Access key is missing.");
         console.error("Web3Forms access key is not set in environment variables.");
+        toast({
+            title: "Configuration Error",
+            description: "The contact form is not set up correctly. Please contact the site administrator.",
+            variant: "destructive",
+        })
         return;
     }
 

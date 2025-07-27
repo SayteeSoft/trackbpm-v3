@@ -41,7 +41,7 @@ function SearchResults({ songs, isLoading, searchTerm }: { songs: Song[], isLoad
   }
   
   return (
-    <div className='container mx-auto px-4 py-8 max-w-4xl'>
+    <div className='container mx-auto px-4 py-8'>
       <div className="space-y-4 max-w-[calc(42rem+90px)] mx-auto mb-8">
         {songs.map((song, index) => (
           <React.Fragment key={song.id}>

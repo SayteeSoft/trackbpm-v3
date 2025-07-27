@@ -5,7 +5,6 @@ import { Separator } from '@/components/ui/separator';
 import { Spotify, Apple, Amazon } from '@/components/icons';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Clock, Music } from 'lucide-react';
 
 export default function SongCard({ song }: { song: Song }) {
   const stopPropagation = (e: React.MouseEvent) => e.stopPropagation();
@@ -16,33 +15,36 @@ export default function SongCard({ song }: { song: Song }) {
     <Card className="rounded-lg overflow-hidden shadow-sm transition-shadow hover:shadow-md bg-card border-2 border-border hover:border-primary/50">
       <Link href={`/song/${song.id}`} className="block hover:bg-muted/20">
         <CardContent className="p-4">
-          <div className="flex items-center gap-4">
-            <div className="relative w-20 h-20 flex-shrink-0">
-              <Image
-                src={song.imageUrl || 'https://placehold.co/100x100.png'}
-                alt={`${song.title} album art`}
-                fill
-                className="rounded-md object-cover"
-                data-ai-hint="album cover"
-              />
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-4 flex-1 min-w-0">
+              <div className="relative w-16 h-16 flex-shrink-0">
+                <Image
+                  src={song.imageUrl || 'https://placehold.co/100x100.png'}
+                  alt={`${song.title} album art`}
+                  fill
+                  className="rounded-md object-cover"
+                  data-ai-hint="album cover"
+                />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs uppercase text-muted-foreground font-semibold tracking-wider truncate">{song.artist}</p>
+                <h3 className="text-xl font-bold text-foreground truncate">{song.title}</h3>
+              </div>
             </div>
-            <div className="flex-1 min-w-0">
-                <p className="text-xs uppercase text-muted-foreground tracking-wider truncate">{song.artist}</p>
-                <h3 className="text-2xl font-bold text-foreground truncate">{song.title}</h3>
-            </div>
-            <div className="flex-shrink-0 w-1/3 text-right space-y-1">
-                 <div className="flex items-center justify-end gap-1.5">
-                    <span className="font-bold text-lg text-primary">{song.bpm || '-'}</span>
-                    <span className="text-sm">BPM</span>
-                </div>
-                <div className="flex items-center justify-end gap-1.5 text-sm text-muted-foreground">
-                   <Music className="h-4 w-4" />
-                  <span>{song.key || '-'}</span>
-                </div>
-                <div className="flex items-center justify-end gap-1.5 text-sm text-muted-foreground">
-                  <Clock className="h-4 w-4" />
-                  <span>{song.duration || '-'}</span>
-                </div>
+            
+            <div className="flex items-center gap-8 text-center flex-shrink-0">
+              <div>
+                <p className="text-xs font-semibold text-muted-foreground tracking-widest">KEY</p>
+                <p className="font-bold text-lg">{song.key || '-'}</p>
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-muted-foreground tracking-widest">DURATION</p>
+                <p className="font-bold text-lg">{song.duration || '-'}</p>
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-muted-foreground tracking-widest">BPM</p>
+                <p className="font-bold text-lg">{song.bpm || '-'}</p>
+              </div>
             </div>
           </div>
         </CardContent>

@@ -13,11 +13,11 @@ import { searchSpotifyTracks } from '@/lib/actions';
 
 const DEFAULT_SEARCH_TERM = "Taylor Swift";
 
-function SearchResults({ songs, isLoading, searchTerm, initialLoad }: { songs: Song[], isLoading: boolean, searchTerm: string, initialLoad: boolean }) {
+function SearchResults({ songs, isLoading, searchTerm }: { songs: Song[], isLoading: boolean, searchTerm: string }) {
 
-  if (initialLoad && isLoading) {
+  if (isLoading && songs.length === 0) {
     return (
-       <div className="flex justify-center">
+       <div className="flex justify-center py-12">
           <Loader2 className="h-8 w-8 text-muted-foreground animate-spin" />
        </div>
     );
@@ -25,18 +25,18 @@ function SearchResults({ songs, isLoading, searchTerm, initialLoad }: { songs: S
 
   if (searchTerm.length > 0 && !isLoading && songs.length === 0) {
     return (
-      <p className="text-center text-sm text-muted-foreground mb-12">
+      <p className="text-center text-sm text-muted-foreground py-12">
         No results found for "{searchTerm}".
       </p>
     );
   }
-
+  
   if (songs.length === 0 && !isLoading) {
-    return (
-      <p className="text-center text-sm text-muted-foreground mb-12">
-        e.g., <span className="font-semibold text-foreground">Sabrina Carpenter - Espresso</span>
-      </p>
-    );
+      return (
+          <p className="text-center text-sm text-muted-foreground py-12">
+              e.g., <span className="font-semibold text-foreground">Sabrina Carpenter - Espresso</span>
+          </p>
+      )
   }
 
   return (
@@ -51,7 +51,7 @@ function SearchResults({ songs, isLoading, searchTerm, initialLoad }: { songs: S
           ))}
         </div>
       )}
-       {isLoading && !initialLoad && (
+       {isLoading && (
          <div className="flex justify-center mt-4">
             <Loader2 className="h-8 w-8 text-muted-foreground animate-spin" />
          </div>
@@ -67,20 +67,19 @@ export default function Header() {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [songs, setSongs] = useState<Song[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [initialLoad, setInitialLoad] = useState(true);
 
   const handleSearch = useCallback(async (term: string) => {
-    if (!term) {
-      setSongs([]);
-      setError(null);
-      setIsLoading(false);
-      return;
+    if (!term && isHomePage) {
+        setSongs([]);
+        setIsLoading(false);
+        return;
     }
-
+    
     setIsLoading(true);
     setError(null);
+
     const result = await searchSpotifyTracks(term);
     if (result.error) {
       setError(result.error);
@@ -89,28 +88,38 @@ export default function Header() {
       setSongs(result.songs || []);
     }
     setIsLoading(false);
-    if(initialLoad){
-      setInitialLoad(false);
-    }
-  }, [initialLoad]);
+  }, [isHomePage]);
 
   useEffect(() => {
     if (isHomePage) {
-      if (initialLoad) {
-        handleSearch(DEFAULT_SEARCH_TERM);
-      } else {
-        const debounceTimeout = setTimeout(() => {
-          handleSearch(searchTerm);
-        }, 500);
-        return () => clearTimeout(debounceTimeout);
-      }
-    } else {
-      setSearchTerm('');
-      setSongs([]);
-      setError(null);
-      setIsLoading(false);
+      // On initial mount of the homepage, perform the default search
+      handleSearch(DEFAULT_SEARCH_TERM);
     }
-  }, [searchTerm, isHomePage, initialLoad, handleSearch]);
+    // We only want this to run once on mount for the default search
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isHomePage]);
+
+  useEffect(() => {
+    // This effect handles user-driven searches with a debounce
+    if (!isHomePage) return;
+
+    // Don't run this on the initial render with the default search term
+    if (searchTerm === '' || searchTerm === DEFAULT_SEARCH_TERM) return;
+    
+    const debounceTimeout = setTimeout(() => {
+      handleSearch(searchTerm);
+    }, 500);
+
+    return () => clearTimeout(debounceTimeout);
+  }, [searchTerm, handleSearch, isHomePage]);
+
+  useEffect(() => {
+      if(!isHomePage){
+          setSongs([]);
+          setSearchTerm('');
+      }
+  },[isHomePage])
+
 
   return (
     <>
@@ -124,22 +133,24 @@ export default function Header() {
         </div>
       </header>
       
-      <div className="w-full max-w-[calc(42rem+90px)] mx-auto mb-2 relative -mt-[29px]">
-        <Input
-          type="text"
-          placeholder="Search by song title or artist name..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full pl-4 pr-12 py-7 rounded-md shadow-lg bg-card border-2 border-border text-lg"
-        />
-        {isLoading && isHomePage ? (
-          <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground animate-spin" />
-        ) : (
-          <Search className="absolute right-4 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground" />
-        )}
-      </div>
+      {isHomePage && (
+         <div className="w-full max-w-[calc(42rem+90px)] mx-auto mb-2 relative -mt-[29px]">
+            <Input
+            type="text"
+            placeholder="Search by song title or artist name..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-4 pr-12 py-7 rounded-md shadow-lg bg-card border-2 border-border text-lg"
+            />
+            {isLoading ? (
+            <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground animate-spin" />
+            ) : (
+            <Search className="absolute right-4 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground" />
+            )}
+        </div>
+      )}
 
-      {isHomePage && <SearchResults songs={songs} isLoading={isLoading} searchTerm={searchTerm} initialLoad={initialLoad} />}
+      {isHomePage && <SearchResults songs={songs} isLoading={isLoading} searchTerm={searchTerm} />}
     </>
   );
 }

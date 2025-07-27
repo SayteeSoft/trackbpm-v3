@@ -109,7 +109,7 @@ export default function SongSearch() {
 
   return (
     <>
-      <div className="w-full max-w-[calc(42rem+90px)] mx-auto mb-2 relative -mt-[29px] px-4">
+      <div className="w-full max-w-[calc(42rem+120px)] mx-auto mb-2 relative -mt-[29px] px-4">
         <Input
           type="text"
           placeholder="type a song, get a bpm"

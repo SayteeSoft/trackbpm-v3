@@ -86,13 +86,13 @@ export default function Header() {
   const pathname = usePathname();
   const isHomePage = pathname === '/';
 
-  const [searchTerm, setSearchTerm] = useState(isHomePage ? DEFAULT_SEARCH_TERM : '');
+  const [searchTerm, setSearchTerm] = useState('');
   const [songs, setSongs] = useState<Song[]>([]);
-  const [isLoading, setIsLoading] = useState(isHomePage);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleSearch = useCallback(async (term: string) => {
-    if (!term && isHomePage) {
+    if (!term) {
         setSongs([]);
         setIsLoading(false);
         return;
@@ -109,7 +109,7 @@ export default function Header() {
       setSongs(result.songs || []);
     }
     setIsLoading(false);
-  }, [isHomePage]);
+  }, []);
   
   useEffect(() => {
     if (!isHomePage) {
@@ -119,18 +119,17 @@ export default function Header() {
       return;
     };
     
-    // Initial search on homepage load
-    if (searchTerm === DEFAULT_SEARCH_TERM) {
+    if (isHomePage && searchTerm === '') {
+      setIsLoading(true);
       handleSearch(DEFAULT_SEARCH_TERM);
     }
-
+    
     const debounceTimeout = setTimeout(() => {
-        // don't search for default term on debounce, only on initial
       if (searchTerm && searchTerm !== DEFAULT_SEARCH_TERM) {
         handleSearch(searchTerm);
       } else if (!searchTerm) {
-        setSongs([]);
-        setIsLoading(false);
+         setSongs([]);
+         setIsLoading(false);
       }
     }, 500);
 

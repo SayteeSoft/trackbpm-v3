@@ -1,3 +1,4 @@
+
 // @ts-nocheck
 import { Song } from './types';
 
@@ -104,7 +105,7 @@ export const searchTracks = async (query: string): Promise<Song[]> => {
     }
 
     const featuresData = await featuresResponse.json();
-    const featuresMap = new Map(featuresData.audio_features.map(f => [f.id, f]));
+    const featuresMap = new Map(featuresData.audio_features.filter(f => f).map(f => [f.id, f]));
 
     return data.tracks.items.map(track => {
         const features = featuresMap.get(track.id);

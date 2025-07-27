@@ -1,4 +1,3 @@
-
 // @ts-nocheck
 import { Song } from './types';
 
@@ -8,22 +7,43 @@ const basic = Buffer.from(`${client_id}:${client_secret}`).toString('base64');
 const TOKEN_ENDPOINT = `https://accounts.spotify.com/api/token`;
 const API_BASE = 'https://api.spotify.com/v1';
 
+let accessToken = {
+    token: null,
+    expiresAt: 0,
+};
+
 // --- HELPER FUNCTIONS ---
 const getAccessToken = async () => {
-  const response = await fetch(TOKEN_ENDPOINT, {
-    method: 'POST',
-    headers: {
-      Authorization: `Basic ${basic}`,
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body: 'grant_type=client_credentials',
-    cache: 'force-cache',
-  });
-  if (!response.ok) {
-    throw new Error('Failed to get Spotify access token');
-  }
-  return response.json();
+    if (!client_id || !client_secret) {
+        throw new Error('Spotify API client ID or secret is not configured in .env file.');
+    }
+
+    if (accessToken.token && Date.now() < accessToken.expiresAt) {
+        return accessToken.token;
+    }
+
+    const response = await fetch(TOKEN_ENDPOINT, {
+        method: 'POST',
+        headers: {
+        Authorization: `Basic ${basic}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'grant_type=client_credentials',
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to get Spotify access token: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    accessToken = {
+        token: data.access_token,
+        // Set expiry to 5 minutes before it actually expires to be safe
+        expiresAt: Date.now() + (data.expires_in - 300) * 1000,
+    };
+    return accessToken.token;
 };
+
 
 const formatDuration = (ms) => {
     const minutes = Math.floor(ms / 60000);
@@ -51,10 +71,10 @@ const transformTrackData = (track, features): Song => {
 // --- EXPORTED API FUNCTIONS ---
 
 export const searchTracks = async (query: string): Promise<Song[]> => {
-    const { access_token } = await getAccessToken();
+    const token = await getAccessToken();
     const response = await fetch(`${API_BASE}/search?q=${encodeURIComponent(query)}&type=track&limit=9`, {
         headers: {
-        Authorization: `Bearer ${access_token}`,
+        Authorization: `Bearer ${token}`,
         },
     });
 
@@ -67,14 +87,21 @@ export const searchTracks = async (query: string): Promise<Song[]> => {
         return [];
     }
 
-    // We only fetch audio features for the search results for performance.
-    // The details page will fetch them for a single track.
     const trackIds = data.tracks.items.map(t => t.id).join(',');
     const featuresResponse = await fetch(`${API_BASE}/audio-features?ids=${trackIds}`, {
         headers: {
-            Authorization: `Bearer ${access_token}`,
+            Authorization: `Bearer ${token}`,
         },
     });
+     if (!featuresResponse.ok) {
+        // We can still proceed without features, just log the error.
+        console.error("Could not fetch audio features for search results");
+        const featuresMap = new Map();
+        return data.tracks.items.map(track => {
+            const features = featuresMap.get(track.id);
+            return transformTrackData(track, features);
+        });
+    }
 
     const featuresData = await featuresResponse.json();
     const featuresMap = new Map(featuresData.audio_features.map(f => [f.id, f]));
@@ -86,11 +113,11 @@ export const searchTracks = async (query: string): Promise<Song[]> => {
 };
 
 export const getTrackDetails = async (trackId: string): Promise<Song> => {
-    const { access_token } = await getAccessToken();
+    const token = await getAccessToken();
     
     const trackResponse = await fetch(`${API_BASE}/tracks/${trackId}`, {
         headers: {
-            Authorization: `Bearer ${access_token}`,
+            Authorization: `Bearer ${token}`,
         },
     });
      if (!trackResponse.ok) {
@@ -99,7 +126,7 @@ export const getTrackDetails = async (trackId: string): Promise<Song> => {
 
     const featuresResponse = await fetch(`${API_BASE}/audio-features/${trackId}`, {
         headers: {
-            Authorization: `Bearer ${access_token}`,
+            Authorization: `Bearer ${token}`,
         },
     });
 
@@ -115,10 +142,10 @@ export const getTrackDetails = async (trackId: string): Promise<Song> => {
 
 // Deprecated function, kept for compatibility if anything still uses it.
 export const getSpotifyTrack = async (query: string) => {
-  const { access_token } = await getAccessToken();
+  const token = await getAccessToken();
   const response = await fetch(`${API_BASE}/search?q=${encodeURIComponent(query)}&type=track&limit=1`, {
     headers: {
-      Authorization: `Bearer ${access_token}`,
+      Authorization: `Bearer ${token}`,
     },
   });
   const data = await response.json();

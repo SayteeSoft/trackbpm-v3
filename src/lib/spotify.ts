@@ -117,7 +117,12 @@ export const searchTracks = async (query: string): Promise<Song[]> => {
   const featuresResponse = await fetch(`https://api.spotify.com/v1/audio-features?ids=${trackIds}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
-  if (!featuresResponse.ok) throw new Error('Failed to get audio features');
+  if (!featuresResponse.ok) {
+    // If features fail, we can still return track data without bpm/key
+    console.error('Failed to get audio features');
+    return tracks.map((track: any) => transformTrackData(track, null));
+  }
+  
   const featuresData = await featuresResponse.json();
   const featuresMap = new Map(featuresData.audio_features.filter(Boolean).map((f: any) => [f.id, f]));
 
@@ -145,6 +150,7 @@ export const getTrackDetails = async (trackId: string): Promise<Song> => {
   if (!trackResponse.ok) throw new Error('Failed to get track details');
   
   const trackData = await trackResponse.json();
+  // Features can sometimes be null for certain tracks, so we handle that gracefully
   const featuresData = featuresResponse.ok ? await featuresResponse.json() : null;
 
   return transformTrackData(trackData, featuresData);

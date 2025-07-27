@@ -59,7 +59,7 @@ export default function SongSearch() {
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const [songs, setSongs] = useState<Song[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true); // Start loading by default
   const [error, setError] = useState<string | null>(null);
 
   const handleSearch = useCallback(async (term: string) => {
@@ -84,22 +84,28 @@ export default function SongSearch() {
   
   useEffect(() => {
     const debounceTimeout = setTimeout(() => {
-        if (searchTerm !== debouncedSearchTerm) {
-            setDebouncedSearchTerm(searchTerm);
-        }
+      // Only set the debounced term if the user has typed something.
+      // The initial search is handled by the other useEffect.
+      if (searchTerm) {
+        setDebouncedSearchTerm(searchTerm);
+      }
     }, 500);
     return () => clearTimeout(debounceTimeout);
-  }, [searchTerm, debouncedSearchTerm]);
+  }, [searchTerm]);
 
 
   useEffect(() => {
+    // This effect runs only when debouncedSearchTerm changes
     if (debouncedSearchTerm) {
       handleSearch(debouncedSearchTerm);
-    } else {
-      // On initial load, debouncedSearchTerm is empty, so we explicitly call search
-      handleSearch('popular'); 
     }
   }, [debouncedSearchTerm, handleSearch]);
+
+  useEffect(() => {
+    // This effect runs only once on mount to get the initial songs
+    handleSearch('popular');
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Empty dependency array ensures this runs only once
 
   return (
     <>
@@ -118,7 +124,7 @@ export default function SongSearch() {
         )}
       </div>
       <ExampleSong />
-      <SearchResults songs={songs} isLoading={isLoading} searchTerm={debouncedSearchTerm} />
+      <SearchResults songs={songs} isLoading={isLoading} searchTerm={debouncedSearchTerm || (songs.length === 0 && !isLoading ? searchTerm : "")} />
     </>
   );
 }

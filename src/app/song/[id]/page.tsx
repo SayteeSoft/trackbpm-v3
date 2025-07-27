@@ -35,8 +35,8 @@ async function ListenOnCard({ service, url, icon }: { service: string; url: stri
   );
 }
 
-export default async function SongPage({ params }: { params: { id: string } }) {
-  const result = await getSpotifyTrackDetails(params.id);
+export default async function SongPage({ params: { id } }: { params: { id: string } }) {
+  const result = await getSpotifyTrackDetails(id);
 
   if (result.error || !result.song) {
     console.error(result.error);

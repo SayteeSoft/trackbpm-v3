@@ -55,7 +55,7 @@ function SearchResults({ songs, isLoading, searchTerm }: { songs: Song[], isLoad
     );
   }
 
-  if (songs.length === 0) {
+  if (songs.length === 0 && searchTerm) {
     return (
         <div className="text-center text-sm text-muted-foreground py-12">
           <p>No results found for "{searchTerm}".</p>
@@ -82,8 +82,8 @@ export default function Header() {
   const pathname = usePathname();
   const isHomePage = pathname === '/';
 
-  const [searchTerm, setSearchTerm] = useState(DEFAULT_SEARCH_TERM);
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(DEFAULT_SEARCH_TERM);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const [songs, setSongs] = useState<Song[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -117,7 +117,7 @@ export default function Header() {
 
   useEffect(() => {
     if (isHomePage) {
-      handleSearch(debouncedSearchTerm);
+      handleSearch(debouncedSearchTerm || DEFAULT_SEARCH_TERM);
     } else {
       setSongs([]);
       setIsLoading(false);

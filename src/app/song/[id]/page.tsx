@@ -69,7 +69,7 @@ export default async function SongPage({ params }: { params: { id: string } }) {
             <div className="flex flex-col md:flex-row gap-8 justify-center">
                 <div className="w-full">
                     <div className="flex flex-col sm:flex-row gap-8 items-start mb-8">
-                    <div className="flex-shrink-0">
+                    <div className="flex-shrink-0 mx-auto sm:mx-0">
                         <Image 
                         src={song.imageUrl || 'https://placehold.co/300x300.png'} 
                         alt={`${song.title} album art`} 
@@ -79,9 +79,9 @@ export default async function SongPage({ params }: { params: { id: string } }) {
                         data-ai-hint="album cover"
                         />
                     </div>
-                    <div className="flex-1 mt-4 sm:mt-0">
+                    <div className="flex-1 mt-4 sm:mt-0 text-center sm:text-left">
                         <p className="text-lg font-medium text-foreground">{song.artist}</p>
-                        <h1 className="text-7xl font-bold tracking-tighter text-foreground">{song.title}</h1>
+                        <h1 className="text-5xl sm:text-7xl font-bold tracking-tighter text-foreground">{song.title}</h1>
                         {song.bpm && (
                         <Badge variant="destructive" className="mt-4">
                             <span className="mr-2">•</span> {Math.round(parseFloat(song.bpm))} BPM

@@ -56,7 +56,7 @@ function SearchComponent() {
 
   return (
     <>
-      <div className="w-full max-w-[calc(42rem+90px)] mx-auto mb-2 relative -mt-[59px]">
+      <div className="w-full max-w-[calc(42rem+90px)] mx-auto mb-2 relative -mt-[44px]">
         <Input
           type="text"
           placeholder="Search by song title or artist name..."

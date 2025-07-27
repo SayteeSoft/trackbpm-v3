@@ -184,20 +184,3 @@ export const getTrackDetails = async (trackId: string): Promise<Song> => {
         throw error;
     }
 };
-
-/**
- * Deprecated function. Use searchTracks for better results and audio feature retrieval.
- */
-export const getSpotifyTrack = async (query: string) => {
-    const token = await getAccessToken();
-    const response = await fetch(`${API_BASE}/search?q=${encodeURIComponent(query)}&type=track&limit=1`, {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    });
-    const data = await response.json();
-    if (data.tracks && data.tracks.items.length > 0) {
-        return data.tracks.items[0];
-    }
-    return null;
-};

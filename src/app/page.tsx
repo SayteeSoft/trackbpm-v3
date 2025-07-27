@@ -35,7 +35,7 @@ export default function Home() {
           <div className="w-full max-w-2xl mx-auto mb-2 relative">
             <Input
               type="text"
-              placeholder="type a song, get a bpm"
+              placeholder="Search by song title or artist name..."
               value={searchTerm}
               onChange={handleSearch}
               className="w-full pl-4 pr-12 py-7 rounded-md shadow-lg bg-card border-2 border-border text-lg"
@@ -43,7 +43,7 @@ export default function Home() {
             <Search className="absolute right-4 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground" />
           </div>
           <p className="text-center text-sm text-muted-foreground mb-12">
-            For example: <span className="font-semibold text-foreground">david bowie - space oddity</span> (which is 81 BPM, by the way)
+            e.g., <span className="font-semibold text-foreground">Sabrina Carpenter - Espresso</span>
           </p>
 
           {searchTerm.length > 0 && filteredSongs.length > 0 && (

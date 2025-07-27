@@ -5,10 +5,10 @@ export const songs: Song[] = [
     id: '1',
     title: 'Espresso',
     artist: 'Sabrina Carpenter',
-    bpm: '127',
-    key: 'F major',
+    bpm: '104',
+    key: 'C major',
     duration: '02:55',
-    imageUrl: 'https://placehold.co/100x100.png',
+    imageUrl: 'https://i.scdn.co/image/ab67616d0000b273f0f753592471c6c518880f08',
     description: 'A classic rock anthem about an astronaut.',
     longDescription:
       'Released in 1969, "Space Oddity" is one of David Bowie\'s signature songs. It tells the story of Major Tom, an astronaut who cuts off communication with Earth and floats into space.',

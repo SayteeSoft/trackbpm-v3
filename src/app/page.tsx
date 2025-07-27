@@ -47,7 +47,7 @@ export default function Home() {
           </p>
 
           {searchTerm.length > 0 && filteredSongs.length > 0 && (
-            <div className="space-y-2">
+            <div className="space-y-4">
               <h2 className="text-xl font-bold mb-4">Search Results</h2>
               {filteredSongs.map((song) => (
                 <Link href={`/song/${song.id}`} key={song.id} className="block">
@@ -64,7 +64,7 @@ export default function Home() {
           )}
           
           {searchTerm.length === 0 && (
-            <div className="space-y-3">
+            <div className="space-y-4">
               {songs.slice(0, adIndex).map((song) => (
                 <Link href={`/song/${song.id}`} key={song.id} className="block">
                   <SongCard song={song} />

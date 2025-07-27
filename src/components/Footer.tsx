@@ -4,9 +4,9 @@ import { Spotify } from "./icons";
 
 export default function Footer() {
   return (
-    <footer className="w-full mt-auto text-white">
+    <footer className="w-full mt-auto">
       <div className="bg-[#151515] py-8">
-        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground space-y-4">
+        <div className="container mx-auto px-4 text-center text-sm text-white space-y-4">
             <div>
               <p>TRACK⚡BPM helps you find the BPM and Key for any song.</p>
               <p>We hope you find our service helpful.</p>
@@ -20,7 +20,7 @@ export default function Footer() {
         </div>
       </div>
       <div className="w-full bg-[#111111]">
-        <div className="container mx-auto px-4 py-4 text-center text-sm">
+        <div className="container mx-auto px-4 py-4 text-center text-sm text-muted-foreground">
             <div className="flex justify-center items-center flex-wrap gap-x-2 gap-y-1">
                 <span>
                     Site By <a href="https://web-developer.one/" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">Saytee Software</a>

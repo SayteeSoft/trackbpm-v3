@@ -94,17 +94,8 @@ export const searchTracks = async (query: string): Promise<Song[]> => {
             Authorization: `Bearer ${token}`,
         },
     });
-     if (!featuresResponse.ok) {
-        // We can still proceed without features, just log the error.
-        console.error("Could not fetch audio features for search results");
-        const featuresMap = new Map();
-        return data.tracks.items.map(track => {
-            const features = featuresMap.get(track.id);
-            return transformTrackData(track, features);
-        });
-    }
 
-    const featuresData = await featuresResponse.json();
+    const featuresData = featuresResponse.ok ? await featuresResponse.json() : { audio_features: [] };
     const featuresMap = new Map(featuresData.audio_features.filter(f => f).map(f => [f.id, f]));
 
     return data.tracks.items.map(track => {

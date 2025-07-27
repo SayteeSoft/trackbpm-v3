@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { songs } from '@/lib/data';
 import { Input } from '@/components/ui/input';
 import SongCard from '@/components/SongCard';
@@ -24,8 +24,6 @@ export default function Home() {
       song.title.toLowerCase().includes(searchTerm) ||
       song.artist.toLowerCase().includes(searchTerm)
   );
-
-  const adIndex = 3;
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -65,16 +63,13 @@ export default function Home() {
           
           {searchTerm.length === 0 && (
             <div className="space-y-4">
-              {songs.slice(0, adIndex).map((song) => (
-                <Link href={`/song/${song.id}`} key={song.id} className="block">
-                  <SongCard song={song} />
-                </Link>
-              ))}
-              <AdBanner />
-              {songs.slice(adIndex).map((song) => (
-                <Link href={`/song/${song.id}`} key={song.id} className="block">
-                  <SongCard song={song} />
-                </Link>
+              {songs.map((song, index) => (
+                <React.Fragment key={song.id}>
+                  <Link href={`/song/${song.id}`} className="block">
+                    <SongCard song={song} />
+                  </Link>
+                  {(index + 1) % 3 === 0 && (index + 1) < songs.length && <AdBanner />}
+                </React.Fragment>
               ))}
             </div>
           )}

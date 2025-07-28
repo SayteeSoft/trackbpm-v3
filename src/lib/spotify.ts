@@ -88,13 +88,7 @@ const transformTrackData = (track: any, features: {key: string, bpm: string} | n
 export const searchTracks = async (query: string): Promise<Song[]> => {
   const token = await getAccessToken();
   
-  let searchUrl;
-  if (query === 'popular') {
-    searchUrl = `https://api.spotify.com/v1/search?q=year%3A${new Date().getFullYear()}&type=track&limit=9`;
-  } else {
-    searchUrl = `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track&limit=9`;
-  }
-
+  const searchUrl = `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track&limit=9`;
 
   const searchResponse = await fetch(searchUrl, {
     headers: { Authorization: `Bearer ${token}` },

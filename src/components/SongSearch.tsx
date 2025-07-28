@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import SongCard from '@/components/SongCard';
 import { Song } from '@/lib/types';
 import { Search, Loader2 } from 'lucide-react';
-import { searchSpotifyTracks } from '@/lib/actions';
+import { searchSpotifyTracks, getDailySongs } from '@/lib/actions';
 import Link from 'next/link';
 import Image from 'next/image';
 import AdBanner from './AdBanner';
@@ -21,7 +21,7 @@ function ExampleSong() {
   );
 }
 
-function SearchResults({ songs, isLoading, searchTerm }: { songs: Song[], isLoading: boolean, searchTerm: string }) {
+function SearchResults({ songs, isLoading }: { songs: Song[], isLoading: boolean }) {
   if (isLoading) {
      return (
        <div className="flex justify-center py-12">
@@ -29,19 +29,11 @@ function SearchResults({ songs, isLoading, searchTerm }: { songs: Song[], isLoad
        </div>
     );
   }
-
-  if (songs.length === 0 && searchTerm) {
-    return (
-        <div className="text-center text-sm text-muted-foreground py-12">
-          <p>No results found for "{searchTerm}".</p>
-        </div>
-    );
-  }
   
   if (songs.length === 0) {
     return (
         <div className="text-center text-muted-foreground py-12">
-            <p>Search for a song to begin.</p>
+            <p>No songs found. Try a different search.</p>
         </div>
     );
   }
@@ -54,7 +46,11 @@ function SearchResults({ songs, isLoading, searchTerm }: { songs: Song[], isLoad
             <SongCard song={song} />
             {(index + 1) % 3 === 0 && (
                <div className="my-8">
-                 <AdBanner />
+                  {index === 2 ? (
+                     <Image src="/banners/website-banner-001(728x90).jpg" alt="advertisement" width={728} height={90} className="w-full max-w-[728px] mx-auto rounded-md" />
+                  ) : (
+                     <AdBanner />
+                  )}
                </div>
             )}
           </React.Fragment>
@@ -67,17 +63,12 @@ function SearchResults({ songs, isLoading, searchTerm }: { songs: Song[], isLoad
 
 export default function SongSearch() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const [songs, setSongs] = useState<Song[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const handleSearch = useCallback(async (term: string) => {
-    if (!term) {
-        setSongs([]);
-        setIsLoading(false);
-        return;
-    }
+    if (!term) return;
     
     setIsLoading(true);
     setError(null);
@@ -93,20 +84,47 @@ export default function SongSearch() {
   }, []);
   
   useEffect(() => {
-    const debounceTimeout = setTimeout(() => {
-        setDebouncedSearchTerm(searchTerm);
-    }, 500);
-    return () => clearTimeout(debounceTimeout);
-  }, [searchTerm]);
-
-
-  useEffect(() => {
-    if (debouncedSearchTerm) {
-      handleSearch(debouncedSearchTerm);
-    } else {
-        setSongs([]);
+    const fetchDailySongs = async () => {
+        setIsLoading(true);
+        setError(null);
+        const result = await getDailySongs();
+        if (result.error) {
+            setError(result.error);
+            setSongs([]);
+        } else {
+            setSongs(result.songs || []);
+        }
+        setIsLoading(false);
     }
-  }, [debouncedSearchTerm, handleSearch]);
+    fetchDailySongs();
+  }, []);
+
+  const onSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const term = e.target.value;
+    setSearchTerm(term);
+    if (term.trim() === '') {
+        // If search is cleared, we could refetch daily songs or clear the list
+        // For now, let's just clear it until a new search is made.
+        // Or refetch daily to restore default state.
+        const fetchDailySongs = async () => {
+            setIsLoading(true);
+            setError(null);
+            const result = await getDailySongs();
+            if (result.error) {
+                setError(result.error);
+                setSongs([]);
+            } else {
+                setSongs(result.songs || []);
+            }
+            setIsLoading(false);
+        }
+        fetchDailySongs();
+
+    } else {
+       handleSearch(term);
+    }
+  }
+
 
   return (
     <>
@@ -115,17 +133,17 @@ export default function SongSearch() {
           type="text"
           placeholder="type a song, get a bpm"
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={onSearchChange}
           className="w-full pl-4 pr-12 py-6 text-base md:py-7 md:text-lg rounded-md shadow-lg bg-card border-2 border-border"
         />
-        {isLoading && searchTerm ? (
+        {isLoading ? (
           <Loader2 className="absolute right-6 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground animate-spin" />
         ) : (
           <Search className="absolute right-6 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground" />
         )}
       </div>
       <ExampleSong />
-      <SearchResults songs={songs} isLoading={isLoading && !!debouncedSearchTerm} searchTerm={debouncedSearchTerm} />
+      <SearchResults songs={songs} isLoading={isLoading} />
     </>
   );
 }

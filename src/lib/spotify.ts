@@ -148,3 +148,18 @@ export const getTrackDetails = async (trackId: string): Promise<Song> => {
 
   return transformTrackData(trackData, features);
 };
+
+export const getDailySongs = async (): Promise<Song[]> => {
+    const dayOfWeek = new Date().getDay();
+    const queries = [
+        'top global',
+        'new releases',
+        'viral hits',
+        'pop rising',
+        'today\'s top hits',
+        'rock classics',
+        'hip hop favorites'
+    ];
+    const query = queries[dayOfWeek];
+    return searchTracks(query);
+}

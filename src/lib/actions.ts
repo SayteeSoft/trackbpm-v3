@@ -1,7 +1,7 @@
 
 'use server';
 import { z } from 'zod';
-import { searchTracks, getTrackDetails } from '@/lib/spotify';
+import { searchTracks, getTrackDetails, getDailySongs as getDailySongsFromSpotify } from '@/lib/spotify';
 import { Song } from './types';
 
 export async function searchSpotifyTracks(query: string): Promise<{songs?: Song[], error?: string}> {
@@ -34,4 +34,14 @@ export async function getSpotifyTrackDetails(trackId: string): Promise<{song?: S
       console.error(e);
       return { error: e.message || 'Failed to get song details. Please try again later.' };
     }
-  }
+}
+
+export async function getDailySongs(): Promise<{songs?: Song[], error?: string}> {
+    try {
+        const results = await getDailySongsFromSpotify();
+        return { songs: results };
+    } catch (e: any) {
+        console.error(e);
+        return { error: e.message || 'Failed to get daily songs. Please try again later.' };
+    }
+}

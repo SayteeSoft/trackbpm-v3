@@ -30,6 +30,7 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     allowedDevOrigins: ['*'],
+    serverComponentsExternalPackages: ['handlebars'],
   }
 };
 

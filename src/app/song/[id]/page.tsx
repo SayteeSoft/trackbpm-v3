@@ -55,6 +55,7 @@ export default async function SongPage({ params: { id } }: { params: { id: strin
 
   const amazonSearchUrl = `https://music.amazon.com/search/${encodeURIComponent(song.title + ' ' + song.artist)}`;
   const appleSearchUrl = `https://music.apple.com/us/search?term=${encodeURIComponent(song.title + ' ' + song.artist)}`;
+  const youtubeSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(song.artist)}`;
 
   // Simple Markdown to HTML converter for bolding
   const renderAnalysis = (text: string) => {
@@ -70,18 +71,20 @@ export default async function SongPage({ params: { id } }: { params: { id: strin
                 <div className="w-full">
                     <div className="flex flex-col sm:flex-row gap-8 items-start mb-8">
                     <div className="flex-shrink-0 mx-auto sm:mx-0">
-                        <Image 
-                        src={song.imageUrl || 'https://placehold.co/300x300.png'} 
-                        alt={`${song.title} album art`} 
-                        width={250} 
-                        height={250} 
-                        className="rounded-lg w-full sm:w-[250px] h-auto shadow-lg"
-                        data-ai-hint="album cover"
-                        />
+                        <Link href={youtubeSearchUrl} target="_blank" rel="noopener noreferrer">
+                            <Image 
+                            src={song.imageUrl || 'https://placehold.co/300x300.png'} 
+                            alt={`${song.title} album art`} 
+                            width={250} 
+                            height={250} 
+                            className="rounded-lg w-full sm:w-[250px] h-auto shadow-lg"
+                            data-ai-hint="album cover"
+                            />
+                        </Link>
                     </div>
                     <div className="flex-1 mt-5 sm:mt-1 text-center sm:text-left">
                         <p className="text-lg font-medium text-foreground mb-2">{song.artist}</p>
-                        <h1 className="text-[39px] sm:text-[63px] font-bold tracking-tighter text-foreground leading-tight pr-4">{song.title}</h1>
+                        <h1 className="text-[36px] sm:text-[60px] font-bold tracking-tighter text-foreground leading-tight pr-4">{song.title}</h1>
                         {song.bpm && (
                         <Badge variant="destructive" className="mt-4">
                             <span className="mr-2">•</span> {Math.round(parseFloat(song.bpm))} BPM

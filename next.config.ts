@@ -25,11 +25,9 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  devIndicators: {
-    buildActivity: false,
-  },
+  allowedDevOrigins: ['*'],
+  serverExternalPackages: ['handlebars'],
   experimental: {
-    allowedDevOrigins: ['*'],
     serverComponentsExternalPackages: ['handlebars'],
   }
 };

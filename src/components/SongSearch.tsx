@@ -39,7 +39,11 @@ function SearchResults({ songs, isLoading, searchTerm }: { songs: Song[], isLoad
   }
   
   if (songs.length === 0) {
-    return null;
+    return (
+        <div className="text-center text-muted-foreground py-12">
+            <p>Search for a song to begin.</p>
+        </div>
+    );
   }
   
   return (
@@ -65,7 +69,7 @@ export default function SongSearch() {
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const [songs, setSongs] = useState<Song[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleSearch = useCallback(async (term: string) => {
@@ -90,9 +94,7 @@ export default function SongSearch() {
   
   useEffect(() => {
     const debounceTimeout = setTimeout(() => {
-      if (searchTerm) {
         setDebouncedSearchTerm(searchTerm);
-      }
     }, 500);
     return () => clearTimeout(debounceTimeout);
   }, [searchTerm]);
@@ -101,13 +103,10 @@ export default function SongSearch() {
   useEffect(() => {
     if (debouncedSearchTerm) {
       handleSearch(debouncedSearchTerm);
+    } else {
+        setSongs([]);
     }
   }, [debouncedSearchTerm, handleSearch]);
-
-  useEffect(() => {
-    handleSearch('popular');
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <>
@@ -119,14 +118,14 @@ export default function SongSearch() {
           onChange={(e) => setSearchTerm(e.target.value)}
           className="w-full pl-4 pr-12 py-6 text-base md:py-7 md:text-lg rounded-md shadow-lg bg-card border-2 border-border"
         />
-        {isLoading ? (
+        {isLoading && searchTerm ? (
           <Loader2 className="absolute right-6 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground animate-spin" />
         ) : (
           <Search className="absolute right-6 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground" />
         )}
       </div>
       <ExampleSong />
-      <SearchResults songs={songs} isLoading={isLoading} searchTerm={debouncedSearchTerm || (songs.length === 0 && !isLoading ? searchTerm : "")} />
+      <SearchResults songs={songs} isLoading={isLoading && !!debouncedSearchTerm} searchTerm={debouncedSearchTerm} />
     </>
   );
 }

@@ -11,7 +11,8 @@ export default function AdBanner() {
       <div className="text-center text-gray-700">
         <p className="text-xs font-semibold">Click</p>
         <p className="text-lg font-bold">Advertise Here</p>
-        <p className="text-sm">(728x90)</p>
+        <p className="text-sm sm:hidden">(300x50)</p>
+        <p className="text-sm hidden sm:block">(728x90)</p>
       </div>
     </Link>
   );

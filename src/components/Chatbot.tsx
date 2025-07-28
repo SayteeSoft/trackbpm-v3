@@ -61,7 +61,7 @@ export default function Chatbot() {
       </div>
 
       {isOpen && (
-        <div className="fixed bottom-20 right-4 z-50 w-full max-w-sm">
+        <div className="fixed bottom-20 right-4 left-4 sm:left-auto z-50 sm:w-full sm:max-w-sm">
           <Card className="shadow-lg">
             <CardHeader className="flex flex-row items-center justify-between py-3 px-4 bg-primary text-primary-foreground rounded-t-lg">
               <CardTitle className="text-lg font-semibold">TRACK⚡BPM Chatbot</CardTitle>

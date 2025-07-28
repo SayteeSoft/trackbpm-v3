@@ -47,7 +47,9 @@ function SearchResults({ songs, isLoading }: { songs: Song[], isLoading: boolean
             {(index + 1) % 3 === 0 && (
                <div className="my-8">
                   {index === 2 ? (
-                     <Image src="/banners/website-banner-001(728x90).jpg" alt="advertisement" width={728} height={90} className="w-full max-w-[728px] mx-auto rounded-md" />
+                     <Link href="https://www.youtube.com/@larrysoundz" target="_blank" rel="noopener noreferrer">
+                        <Image src="/banners/website-banner-001(728x90).jpg" alt="advertisement" width={728} height={90} className="w-full max-w-[728px] mx-auto rounded-md" />
+                     </Link>
                   ) : (
                      <AdBanner />
                   )}

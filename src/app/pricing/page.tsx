@@ -28,7 +28,8 @@ const plans = [
     description: 'Advertisement on Song landing page',
     features: [
         '1 x Leaderboard Ad - banner',
-        'Horizontal dimensions (728 x 90)',
+        '1 x placement per payment',
+        'Horizontal size (728px by 90px)',
     ],
     cta: 'Get Standard',
     popular: true,

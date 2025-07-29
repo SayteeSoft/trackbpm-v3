@@ -1,4 +1,3 @@
-
 'use client';
 
 import { CheckCircle } from 'lucide-react';
@@ -40,13 +39,13 @@ const plans = [
     name: 'Advanced',
     price: '299.99',
     currency: 'GBP',
-    description: 'Ads on Song landing & details pages',
+    description: 'Ads on Songs landing & details pages',
     features: [
       '1 x Leaderboard Ad - banner',
       'Horizontal size (728px x 90px)',
       '1 x Leaderboard Ad - banner',
       'Horizontal size (728px x 90px)',
-      '2 x placement per payment',
+      '2 x placement per payments',
     ],
     cta: 'Get Advanced',
     popular: false,

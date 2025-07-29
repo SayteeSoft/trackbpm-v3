@@ -14,8 +14,7 @@ const plans = [
     currency: 'GBP',
     description: 'Advertisement on Song details page',
     features: [
-      '1 x Skyscraper Ad - banner',
-      'Vertical dimensions (160 x 600)',
+      '1 x Skyscraper Ad - banner<br />Vertical dimensions (160px x 600px)',
     ],
     cta: 'Get Basic',
     popular: false,
@@ -87,7 +86,7 @@ export default function PricingPage() {
                         {plan.features.map((feature, index) => (
                             <li key={index} className="flex items-start">
                             <CheckCircle className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
-                            <span>{feature}</span>
+                            <span dangerouslySetInnerHTML={{ __html: feature }}></span>
                             </li>
                         ))}
                         </ul>

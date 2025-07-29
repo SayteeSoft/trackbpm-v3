@@ -16,7 +16,7 @@ const plans = [
     description: 'Ads on the Songs landing pages',
     features: [
       '1 x Skyscraper Ad - banner',
-      'Vertical size (160px by 600px)',
+      'Vertical size (160px x 600px)',
       '1 x placement per payment',
     ],
     cta: 'Get Basic',

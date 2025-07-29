@@ -1,7 +1,7 @@
 
 'use client';
 
-import { PayPalButtons, usePayPalScriptReducer } from '@paypal/paypal-js';
+import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
 import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast"

@@ -45,7 +45,8 @@ export default async function SongPage({ params: { id } }: { params: { id: strin
 
   const { song } = result;
 
-  const analysisResult = await getSongAnalysis({
+  // Start fetching analysis as soon as we have song details
+  const analysisPromise = getSongAnalysis({
     title: song.title,
     artist: song.artist,
     bpm: song.bpm,
@@ -63,6 +64,9 @@ export default async function SongPage({ params: { id } }: { params: { id: strin
     return { __html: html };
   };
 
+  const analysisResult = await analysisPromise;
+
+
   return (
     <div className="bg-background">
       <main className="container mx-auto px-4 py-8">
@@ -79,6 +83,7 @@ export default async function SongPage({ params: { id } }: { params: { id: strin
                             height={250} 
                             className="rounded-lg w-full sm:w-[250px] h-auto shadow-lg"
                             data-ai-hint="album cover"
+                            priority={true}
                             />
                         </Link>
                     </div>

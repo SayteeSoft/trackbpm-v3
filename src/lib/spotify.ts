@@ -36,6 +36,10 @@ const getAccessToken = async (): Promise<string> => {
       'Content-Type': 'application/x-www-form-urlencoded',
     },
     body: 'grant_type=client_credentials',
+    cache: 'force-cache',
+    next: {
+      revalidate: 3500,
+    }
   });
 
   if (!response.ok) {
@@ -127,24 +131,33 @@ export const getTrackDetails = async (trackId: string): Promise<Song> => {
   const token = await getAccessToken();
   const trackUrl = `https://api.spotify.com/v1/tracks/${trackId}`;
   
-  const trackResponse = await fetch(trackUrl, { headers: { Authorization: `Bearer ${token}` } });
+  const trackPromise = fetch(trackUrl, { headers: { Authorization: `Bearer ${token}` } });
+  
+  // Eagerly get the track data to start the AI call
+  const trackResponseForAi = await fetch(trackUrl, { headers: { Authorization: `Bearer ${token}` } });
+  if (!trackResponseForAi.ok) {
+     const errorText = await trackResponseForAi.text();
+     throw new Error(`Failed to get track details for AI: ${trackResponseForAi.status} ${errorText}`);
+  }
+  const trackDataForAi = await trackResponseForAi.json();
 
+  const featuresPromise = getSongDetails({
+      title: trackDataForAi.name,
+      artist: trackDataForAi.artists.map((a: { name: string }) => a.name).join(', '),
+  }).catch(e => {
+      console.warn(`Could not get AI audio features for track ${trackId}`, e);
+      return null;
+  });
+
+
+  const [trackResponse, features] = await Promise.all([trackPromise, featuresPromise]);
+  
   if (!trackResponse.ok) {
     const errorText = await trackResponse.text();
     throw new Error(`Failed to get track details: ${trackResponse.status} ${errorText}`);
   }
   
   const trackData = await trackResponse.json();
-  
-  let features = null;
-  try {
-    features = await getSongDetails({
-        title: trackData.name,
-        artist: trackData.artists.map((a: { name: string }) => a.name).join(', '),
-    });
-  } catch (e) {
-    console.warn(`Could not get AI audio features for track ${trackId}`, e);
-  }
 
   return transformTrackData(trackData, features);
 };

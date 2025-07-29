@@ -4,9 +4,16 @@
 import { CheckCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import PayPalButton from '@/components/PayPalButton';
 import { PayPalScriptProvider } from '@paypal/react-paypal-js';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
+import { Loader2 } from 'lucide-react';
+
+const PayPalButton = dynamic(() => import('@/components/PayPalButton'), {
+  ssr: false,
+  loading: () => <div className="flex justify-center items-center h-[48px]"><Loader2 className="animate-spin" /></div>,
+});
+
 
 const plans = [
   {

@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Badge } from '@/components/ui/badge';
 import PayPalButton from '@/components/PayPalButton';
 import { PayPalScriptProvider } from '@paypal/react-paypal-js';
+import Link from 'next/link';
 
 const plans = [
   {
@@ -100,6 +101,12 @@ export default function PricingPage() {
                 </CardContent>
                 </Card>
             ))}
+            </div>
+
+            <div className="text-center mt-12">
+              <p className="text-muted-foreground">
+                For a single Pop-Up banner on the landing page of the site, click <Link href="/contact" className="text-primary underline hover:text-primary/80">Contact Us!</Link>
+              </p>
             </div>
         </main>
         </div>

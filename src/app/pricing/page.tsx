@@ -1,3 +1,4 @@
+
 'use client';
 
 import { CheckCircle } from 'lucide-react';
@@ -25,11 +26,11 @@ const plans = [
     name: 'Standard',
     price: '199.99',
     currency: 'GBP',
-    description: 'Advertisement on Song landing page',
+    description: 'Ads on the Songs landing pages',
     features: [
         '1 x Leaderboard Ad - banner',
+        'Horizontal size (728px x 90px)',
         '1 x placement per payment',
-        'Horizontal size (728px by 90px)',
     ],
     cta: 'Get Standard',
     popular: true,

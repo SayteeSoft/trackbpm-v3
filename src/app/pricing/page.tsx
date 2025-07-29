@@ -106,7 +106,7 @@ export default function PricingPage() {
 
             <div className="text-center mt-12">
               <p className="text-muted-foreground">
-                For a single Pop-Up banner on the landing page of the site, click <Link href="/contact" className="text-primary underline hover:text-primary/80">Contact Us!</Link>
+                For a single Pop-Up banner on the site Songs landing page, click &gt; <Link href="/contact" className="text-primary underline hover:text-primary/80">Contact Us!</Link>
               </p>
             </div>
         </main>

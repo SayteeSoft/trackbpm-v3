@@ -5,10 +5,19 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Chatbot from '@/components/Chatbot';
 import { Toaster } from "@/components/ui/toaster"
+import { PayPalScriptProvider } from '@paypal/react-paypal-js';
 
 export const metadata: Metadata = {
   title: 'TRACK ⚡ BPM',
   description: 'A simple tool to find the BPM of your favorite songs.',
+};
+
+const initialOptions = {
+    "client-id": process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "sb",
+    "enable-funding": "paylater,venmo,card",
+    "disable-funding": "",
+    "data-sdk-integration-source": "developer-studio",
+    currency: "GBP"
 };
 
 export default function RootLayout({
@@ -26,13 +35,21 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased">
-        <div className="flex flex-col min-h-screen">
-          <Header />
-          <main className="flex-1">{children}</main>
-          <Footer />
-          <Chatbot />
-          <Toaster />
-        </div>
+        <PayPalScriptProvider options={{
+          clientId: process.env.PAYPAL_CLIENT_ID || "AfJ7bhG_VDx0Z2o_EtExWS_Ps2eUiZKS0lABsQCbQC02V-c_Z59cOw8xq3yNqO763BAKwSRAf8n7fob8",
+          currency: "GBP",
+          components: "buttons",
+          "enable-funding": "paylater,venmo,card",
+          "data-sdk-integration-source": "developer-studio"
+        }}>
+            <div className="flex flex-col min-h-screen">
+              <Header />
+              <main className="flex-1">{children}</main>
+              <Footer />
+              <Chatbot />
+              <Toaster />
+            </div>
+        </PayPalScriptProvider>
       </body>
     </html>
   );

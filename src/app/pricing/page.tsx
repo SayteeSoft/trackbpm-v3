@@ -14,8 +14,8 @@ const plans = [
     currency: 'GBP',
     description: 'Advertisement on Song details page',
     features: [
-      '1 x Leaderboard Ad - banner',
-      'Horizontal size (728px by 90px)',
+      '1 x Skyscraper Ad - banner',
+      'Vertical size (160px by 600px)',
     ],
     cta: 'Get Basic',
     popular: false,

@@ -13,10 +13,11 @@ const plans = [
     name: 'Basic',
     price: '99.99',
     currency: 'GBP',
-    description: 'Advertisement on Song details page',
+    description: 'Ads on the Songs landing pages',
     features: [
       '1 x Skyscraper Ad - banner',
       'Vertical size (160px by 600px)',
+      '1 x placement per payment',
     ],
     cta: 'Get Basic',
     popular: false,

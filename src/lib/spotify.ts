@@ -69,17 +69,17 @@ const formatDuration = (ms: number): string => {
 /**
  * Transforms raw Spotify track data and AI features into the Song type.
  * @param {any} track - The raw track object from Spotify.
- * @param {{key: string, bpm: string} | null} features - The AI-generated features.
+ * @param {{key: string, bpm: string, duration: string} | null} features - The AI-generated features.
  * @returns {Song} The transformed Song object.
  */
-const transformTrackData = (track: any, features: {key: string, bpm: string} | null): Song => {
+const transformTrackData = (track: any, features: {key: string, bpm: string, duration: string} | null): Song => {
   return {
     id: track.id,
     title: track.name,
     artist: track.artists.map((a: { name: string }) => a.name).join(', '),
     bpm: features?.bpm || '',
     key: features?.key || '',
-    duration: formatDuration(track.duration_ms),
+    duration: features?.duration || formatDuration(track.duration_ms),
     imageUrl: track.album.images?.[0]?.url || 'https://placehold.co/100x100.png',
   };
 };

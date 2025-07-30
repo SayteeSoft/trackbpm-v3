@@ -20,9 +20,8 @@ interface PayPalButtonProps {
 export default function PayPalButton({ plan }: PayPalButtonProps) {
     const [{ isPending }] = usePayPalScriptReducer();
     const { toast } = useToast();
-    const [resultMessage, setResultMessage] = useState('');
 
-    const createOrder = async () => {
+    const createOrder = async (): Promise<string> => {
         try {
             const response = await fetch("/api/orders", {
                 method: "POST",
@@ -33,6 +32,12 @@ export default function PayPalButton({ plan }: PayPalButtonProps) {
                     plan: plan,
                 }),
             });
+
+            if (!response.ok) {
+                const errorBody = await response.json();
+                const errorMessage = errorBody.error || `Server responded with ${response.status}`;
+                throw new Error(errorMessage);
+            }
 
             const orderData = await response.json();
 
@@ -47,12 +52,15 @@ export default function PayPalButton({ plan }: PayPalButtonProps) {
             }
         } catch (error) {
             console.error(error);
+            const errorMessage = error instanceof Error ? error.message : String(error);
             toast({
                 title: "Error",
-                description: `Could not initiate PayPal Checkout. ${error}`,
+                description: `Could not initiate PayPal Checkout: ${errorMessage}`,
                 variant: "destructive",
             });
-            return '';
+            // Must return a Promise that resolves to a faulty order ID to prevent the blank popup.
+            // Returning an empty string is a way to signal failure to the PayPal script.
+            return Promise.reject(new Error('Failed to create order.'));
         }
     };
     
@@ -101,6 +109,15 @@ export default function PayPalButton({ plan }: PayPalButtonProps) {
         }
     };
 
+    const onError = (err: any) => {
+        console.error("PayPal Checkout onError", err);
+        toast({
+            title: "PayPal Error",
+            description: "An error occurred with the PayPal transaction. Please try again.",
+            variant: "destructive",
+        });
+    };
+
     return (
         <div className="w-full">
             {isPending ? <Loader2 className="animate-spin mx-auto" /> : null}
@@ -108,6 +125,7 @@ export default function PayPalButton({ plan }: PayPalButtonProps) {
                 style={{ layout: "vertical", label: "pay" }}
                 createOrder={createOrder}
                 onApprove={onApprove}
+                onError={onError}
                 forceReRender={[plan]}
             />
         </div>

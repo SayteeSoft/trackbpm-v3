@@ -73,7 +73,7 @@ export default async function SongPage({ params: { id } }: { params: { id: strin
         <div className="max-w-[calc(42rem+90px)] mx-auto">
             <div className="flex flex-col md:flex-row gap-8 justify-center">
                 <div className="w-full">
-                    <div className="flex flex-col sm:flex-row gap-8 items-start mb-8">
+                    <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8 mb-8">
                     <div className="flex-shrink-0 mx-auto sm:mx-0">
                         <Link href={youtubeSearchUrl} target="_blank" rel="noopener noreferrer">
                             <Image 

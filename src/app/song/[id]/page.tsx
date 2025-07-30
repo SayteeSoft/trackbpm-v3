@@ -99,7 +99,7 @@ export default async function SongPage({ params: { id } }: { params: { id: strin
                     </div>
 
                     <div className="mb-8">
-                    <h2 className="text-2xl font-bold mb-4">Song Metrics</h2>
+                    <h2 className="text-2xl font-bold mb-4 text-center md:text-left">Song Metrics</h2>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                         <MetricCard label="Key" value={song.key} />
                         <MetricCard label="Duration" value={song.duration} />

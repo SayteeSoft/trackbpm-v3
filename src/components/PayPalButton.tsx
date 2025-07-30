@@ -33,34 +33,32 @@ export default function PayPalButton({ plan }: PayPalButtonProps) {
                 }),
             });
 
+            const orderData = await response.json();
+
             if (!response.ok) {
-                const errorBody = await response.json();
-                const errorMessage = errorBody.error || `Server responded with ${response.status}`;
+                const errorMessage = orderData.error || `Server responded with ${response.status}`;
                 throw new Error(errorMessage);
             }
-
-            const orderData = await response.json();
 
             if (orderData.id) {
                 return orderData.id;
             } else {
                 const errorDetail = orderData?.details?.[0];
                 const errorMessage = errorDetail
-                    ? `${errorDetail.issue} ${errorDetail.description} (${orderData.debug_id})`
+                    ? `${errorDetail.issue} ${errorDetail.description} (${orderData.debug_id || ''})`
                     : JSON.stringify(orderData);
                 throw new Error(errorMessage);
             }
         } catch (error) {
-            console.error(error);
+            console.error("Create Order Error:", error);
             const errorMessage = error instanceof Error ? error.message : String(error);
             toast({
-                title: "Error",
+                title: "Error Creating Order",
                 description: `Could not initiate PayPal Checkout: ${errorMessage}`,
                 variant: "destructive",
             });
-            // Must return a Promise that resolves to a faulty order ID to prevent the blank popup.
-            // Returning an empty string is a way to signal failure to the PayPal script.
-            return Promise.reject(new Error('Failed to create order.'));
+            // Reject the promise to prevent the PayPal popup from opening with a faulty/missing order ID
+            return Promise.reject(new Error(errorMessage));
         }
     };
     
@@ -111,9 +109,10 @@ export default function PayPalButton({ plan }: PayPalButtonProps) {
 
     const onError = (err: any) => {
         console.error("PayPal Checkout onError", err);
+        // This toast is now more relevant because createOrder rejects on failure.
         toast({
             title: "PayPal Error",
-            description: "An error occurred with the PayPal transaction. Please try again.",
+            description: "An error occurred with the PayPal transaction. Please try again or contact support.",
             variant: "destructive",
         });
     };
